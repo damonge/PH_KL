@@ -7,7 +7,7 @@ from scipy.integrate import quad
 import matplotlib.cm as cm
 import common_gofish as cgf
 
-plot_stuff=False
+plot_stuff=True
 SZ_RED=0.02
 LMAX=500
 nsamp=1
@@ -17,7 +17,7 @@ parname='fnl'
 par0=0.0
 dpar=0.5
 sigma_gamma=1.
-zedge_lo=0.1
+zedge_lo=0.5
 zedge_hi=1.4
 prefix="fnl"
 nzfile='nz_red.txt'
@@ -63,7 +63,8 @@ xcorr/=np.sqrt(np.diag(xcorr)[:,None]*np.diag(xcorr)[None,:])
 ndens=np.array([np.sum(nz)*(zarr[1]-zarr[0]) for nz in nz_bins])
 print quad(nz_red,0,5)[0],np.sum(nzarr*(zarr[1]-zarr[0])),np.sum(ndens)
 
-run_name=prefix+"_sz%.2lf_"%SZ_RED+"ns%d_"%nsamp+"lmx%d"%LMAX
+#run_name=prefix+"_sz%.2lf_"%SZ_RED+"ns%d_"%nsamp+"lmx%d"%LMAX
+run_name="sz%.2lf_"%SZ_RED+"ns%d_"%nsamp+"lmx%d"%LMAX
 np.savetxt("bins_"+run_name+".txt",np.transpose([z0bins,zfbins,sz_red(0.5*(z0bins+zfbins))]),fmt='%lf %lf %lf 0 0 '+'%d'%LMAX,header='[1]-z0 [2]-zf [3]-sz [4]-marg_sz [5]-marg_bz [6]-lmax')
 zb_arr=np.linspace(0,ZMAX,16); bb_arr=bz_red(zb_arr); np.savetxt("bz_"+run_name+".txt",np.transpose([zb_arr,bb_arr]),fmt='%lf %lf 0');
 np.savetxt("nz_"+run_name+".txt",np.transpose([zarr,nzarr]),fmt='%lf %lf')
