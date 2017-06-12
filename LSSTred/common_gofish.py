@@ -151,7 +151,13 @@ def read_cls_class(fname) :
 
     return dic
 
-def run_gofish(rname,lmx,parname,par0,dpar) :
+def run_gofish(rname,lmx,parname,par0,dpar,trtype) :
+    if trtype=='gal_clustering' :
+        l_limber=lmx+1
+    else :
+        l_limber=100
+
+    print "WOO"
     stout=""
     stout+='['+parname+']\n'
     stout+='x= %lE\n'%par0
@@ -160,18 +166,23 @@ def run_gofish(rname,lmx,parname,par0,dpar) :
     stout+='onesided=0\n'
     stout+='\n'
     stout+='[Tracer 1]\n'
-    stout+='tracer_name=gal_survey\n'
-    stout+='tracer_type=gal_clustering\n'
+    stout+='tracer_name=gal_survey \n'
+    stout+='tracer_type='+trtype+' \n'
     stout+='bins_file=../bins_'+rname+'.txt\n'
     stout+='nz_file=../nz_'+rname+'.txt\n'
-    stout+='bias_file=../bz_'+rname+'.txt\n'
-    stout+='sbias_file= stupid\n'
-    stout+='ebias_file= stupid\n'
+    if trtype=='gal_clustering' :
+        stout+='bias_file=../bz_'+rname+'.txt\n'
+        stout+='sbias_file= stupid\n'
+        stout+='ebias_file= stupid\n'
+    else :
+        stout+='abias_file= stupid\n'
+        stout+='rfrac_file= stupid\n'
+        stout+='sigma_gamma= 0.28\n'
     stout+='use_tracer= yes\n'
     stout+='\n'
     stout+='[CLASS parameters]\n'
     stout+='lmax_lss= %d\n'%lmx
-    stout+='lmin_limber= %d\n'%lmx
+    stout+='lmin_limber= %d\n'%l_limber
     stout+='include_alignment= no\n'
     stout+='include_rsd= no\n'
     stout+='include_magnification= no\n'
