@@ -7,7 +7,7 @@ from scipy.integrate import quad
 import matplotlib.cm as cm
 import common_gofish as cgf
 
-plot_stuff=False
+plot_stuff=True
 SZ_RED=0.02
 LMAX=500
 nsamp=1
@@ -76,7 +76,8 @@ if plot_stuff :
         ran=np.where(nz>1E-3*np.amax(nz))[0]
         plt.plot(zarr[ran],nz[ran],color=cm.brg((nbins-i-0.5)/nbins),lw=2)
     plt.plot(zarr,nzarr,'k-',lw=2)
-    plt.xlim([0,1.1*np.amax(nzarr)])
+    plt.ylim([0,1.05*np.amax(nzarr)])
+    plt.xlim([0,1.2*zedge_hi])
     plt.xlabel('$z$',fontsize=18)
     plt.ylabel('$N(z)\\,\\,[{\\rm arcmin}^{-2}]$',fontsize=18)
 
@@ -105,6 +106,8 @@ if plot_stuff :
     plt.loglog()
     plt.xlabel('$\\ell$',fontsize=18)
     plt.ylabel('$C^{\\alpha\\beta}_\\ell$',fontsize=18)
+    plt.xlim([2,500])
+    plt.ylim([5E-7,1E-4])
 
 
 def change_basis(c,m,ev) :
@@ -136,14 +139,16 @@ c_p_dfn=change_basis(c_ij_dfn,metric,e_o)
 if plot_stuff :
     plt.figure();
     ax=plt.gca()
-#ax.imshow([[0.,1.],[0.,1.]],extent=[700,1600,140,200],interpolation='bicubic',cmap=cm.summer,aspect='auto')
-#plt.text(220,160,'$p\\in[1,16]$',{'fontsize':16})
+    ax.imshow([[0.,1.],[0.,1.]],extent=[230,430,270,380],interpolation='bicubic',cmap=cm.summer,aspect='auto')
+    plt.text(90,300,'$p\\in[1,%d]$'%nbins,{'fontsize':16})
     for i in np.arange(nbins) :
         c=c_p_fid[:,i]
-        col=cm.brg((i+0.5)/nbins)
+        col=cm.summer((i+0.5)/nbins)
         plt.plot(larr,c,color=col,lw=2)
     plt.ylabel("$D_\\ell^p$",fontsize=16)
     plt.xlabel("$\\ell$",fontsize=16)
+    plt.xlim([2,500])
+    plt.ylim([0.8,500])
     plt.loglog()
 
 
@@ -152,21 +157,16 @@ if plot_stuff :
     plt.figure()
     ax=plt.gca()
     zbarr=0.5*(z0bins+zfbins)
-#ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.35,-0.30],interpolation='bicubic',cmap=cm.winter,aspect='auto')
-#ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.42,-0.37],interpolation='bicubic',cmap=cm.autumn,aspect='auto')
-#plt.text(1.7,-0.34,'$1^{\\rm st}\\,\\,{\\rm mode}$',{'fontsize':16})
-#plt.text(1.7,-0.41,'$2^{\\rm nd}\\,\\,{\\rm mode}$',{'fontsize':16})
-    for i in (1+np.arange(9))*10 :
-        ax.plot(zbarr,e_o[  i,:,0]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens)),'o-',markeredgewidth=0,
-             color=cm.winter((i+0.5)/101))
-        if e_o[i,2,1]>0 :
-            sign=-1
-        else :
-            sign=1
-        ax.plot(zbarr,sign*e_o[  i,:,1]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens)),'o-',
-                markeredgewidth=0,color=cm.autumn((i+0.5)/101))
+    ax.imshow([[0.,1.],[0.,1.]],extent=[1.25,1.37,-0.22,-0.17],interpolation='bicubic',
+              cmap=cm.winter,aspect='auto')
+    nbtop=5
+    i_ell=30
+    plt.text(1.12,-0.203,'$p\\in[1,%d]$'%nbtop,{'fontsize':16})
+    for i in np.arange(nbtop) :
+        ax.plot(zbarr,e_o[i_ell,:,i]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[i_ell,:,i]**2*ndens)),'o-',
+                markeredgewidth=0,color=cm.winter((i+0.5)/nbtop))
     plt.xlabel('$z_\\alpha$',fontsize=18)
-    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf E}_\\ell)^1_\\alpha$',fontsize=18)
+    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf E}_{%d})^p_\\alpha$'%i_ell,fontsize=18)
 
 
 fisher=(larr+0.5)[:,None]*(c_p_dfn/c_p_fid)**2
@@ -181,9 +181,8 @@ if plot_stuff :
     plt.legend(loc='upper right',frameon=False)
     plt.xlabel('${\\rm KL\\,\\,mode\\,\\,order}\\,\\,p_{\\rm KL}$',fontsize=18)
     plt.ylabel('${\\rm Relative\\,information\\,\\,content}$',fontsize=18)
-    plt.yscale('log')
     plt.xlim([0.9,nbins+0.1])
-    plt.ylim([3E-5,1.2])
+    plt.ylim([0,1.0])
 
 if plot_stuff :
     plt.show()
