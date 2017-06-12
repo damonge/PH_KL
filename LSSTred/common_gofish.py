@@ -199,7 +199,7 @@ def run_gofish(rname,lmx,parname,par0,dpar,trtype) :
     stout+='output_fisher= Fisher\n'
     stout+='\n'
     stout+='[Behaviour parameters]\n'
-    stout+='model= LCDM\n'
+    stout+='model= wCDM\n'
     stout+='save_cl_files= yes\n'
     stout+='save_param_files= yes\n'
     f=open('param_'+rname+'.ini','w')
@@ -208,7 +208,10 @@ def run_gofish(rname,lmx,parname,par0,dpar,trtype) :
     os.system('cd GoFish ; python main.py ../param_'+rname+'.ini; cd ..')
 
     dic_fid=read_cls_class('outputs_'+rname+'/run_fidcl.dat')
-    dic_mfn=read_cls_class('outputs_'+rname+'/run_mfnlcl.dat')
-    dic_pfn=read_cls_class('outputs_'+rname+'/run_pfnlcl.dat')
+    dic_mfn=read_cls_class('outputs_'+rname+'/run_m'+parname+'cl.dat')
+    dic_pfn=read_cls_class('outputs_'+rname+'/run_p'+parname+'cl.dat')
 
-    return dic_fid['cl_dd'],dic_mfn['cl_dd'],dic_pfn['cl_dd'],
+    if trtype=='gal_clustering' :
+        return dic_fid['cl_dd'],dic_mfn['cl_dd'],dic_pfn['cl_dd'],
+    else :
+        return dic_fid['cl_ll'],dic_mfn['cl_ll'],dic_pfn['cl_ll'],
