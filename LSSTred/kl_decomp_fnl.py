@@ -8,7 +8,7 @@ import matplotlib.cm as cm
 import common_gofish as cgf
 
 SZ_RED=0.02
-LMAX=100
+LMAX=500
 nsamp=1
 ZMAX=2
 
