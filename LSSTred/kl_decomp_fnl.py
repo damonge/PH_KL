@@ -80,6 +80,7 @@ if plot_stuff :
     plt.xlim([0,1.2*zedge_hi])
     plt.xlabel('$z$',fontsize=18)
     plt.ylabel('$N(z)\\,\\,[{\\rm arcmin}^{-2}]$',fontsize=18)
+    plt.savefig('../Draft/Figs/nz_lsst_gc.pdf',bbox_inches='tight')
 
 #Compute power spectra
 c_ij_fid,c_ij_mfn,c_ij_pfn=cgf.run_gofish(run_name,LMAX,parname,par0,dpar,tracertype)
@@ -108,6 +109,7 @@ if plot_stuff :
     plt.ylabel('$C^{\\alpha\\beta}_\\ell$',fontsize=18)
     plt.xlim([2,500])
     plt.ylim([5E-7,1E-4])
+    plt.savefig('../Draft/Figs/c_ij_gc.pdf',bbox_inches='tight')
 
 
 def change_basis(c,m,ev) :
@@ -150,6 +152,7 @@ if plot_stuff :
     plt.xlim([2,500])
     plt.ylim([0.8,500])
     plt.loglog()
+    plt.savefig('../Draft/Figs/d_p_gc.pdf',bbox_inches='tight')
 
 
 #Plot K-L eigenvectors
@@ -167,6 +170,7 @@ if plot_stuff :
                 markeredgewidth=0,color=cm.winter((i+0.5)/nbtop))
     plt.xlabel('$z_\\alpha$',fontsize=18)
     plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf E}_{%d})^p_\\alpha$'%i_ell,fontsize=18)
+    plt.savefig('../Draft/Figs/kl_modes_gc.pdf',bbox_inches='tight')
 
 
 fisher=(larr+0.5)[:,None]*(c_p_dfn/c_p_fid)**2
@@ -183,6 +187,7 @@ if plot_stuff :
     plt.ylabel('${\\rm Relative\\,information\\,\\,content}$',fontsize=18)
     plt.xlim([0.9,nbins+0.1])
     plt.ylim([0,1.0])
+    plt.savefig('../Draft/Figs/information_gc.pdf',bbox_inches='tight')
 
 if plot_stuff :
     plt.show()

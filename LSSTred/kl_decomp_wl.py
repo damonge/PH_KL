@@ -7,7 +7,7 @@ from scipy.integrate import quad
 import matplotlib.cm as cm
 import common_gofish as cgf
 
-plot_stuff=False
+plot_stuff=True
 SZ_RED=0.05
 LMAX=2000
 nsamp=1
@@ -76,9 +76,11 @@ if plot_stuff:
         ran=np.where(nz>1E-3*np.amax(nz))[0]
         plt.plot(zarr[ran],nz[ran],color=cm.brg((nbins-i-0.5)/nbins),lw=2)
     plt.plot(zarr,nzarr,'k-',lw=2)
-    plt.xlim([0,1.1*np.amax(nzarr)])
+    plt.ylim([0,1.05*np.amax(nzarr)])
+    plt.xlim([0,1.2*zedge_hi])
     plt.xlabel('$z$',fontsize=18)
     plt.ylabel('$N(z)\\,\\,[{\\rm arcmin}^{-2}]$',fontsize=18)
+    plt.savefig('../Draft/Figs/nz_lsst_wl.pdf',bbox_inches='tight')
 
 #Compute power spectra
 c_ij_fid,c_ij_mfn,c_ij_pfn=cgf.run_gofish(run_name,LMAX,parname,par0,dpar,tracertype)
@@ -100,11 +102,14 @@ if plot_stuff :
     plt.figure();
     for i1 in np.arange(nbins) :
         col=cm.brg((nbins-i1-0.5)/nbins)
-        plt.plot(larr,(c_ij_fid[:,i1,i1]-n_ij_fid[:,i1,i1]),'-',color=col,lw=2)
-        plt.plot(larr,(n_ij_fid[:,i1,i1]                  ),'--',color=col,lw=1)
+        plt.plot(larr,larr*(c_ij_fid[:,i1,i1]-n_ij_fid[:,i1,i1])/(2*np.pi),'-',color=col,lw=2)
+        plt.plot(larr,larr*(n_ij_fid[:,i1,i1]                  )/(2*np.pi),'--',color=col,lw=1)
     plt.loglog()
     plt.xlabel('$\\ell$',fontsize=18)
-    plt.ylabel('$C^{\\alpha\\beta}_\\ell$',fontsize=18)
+    plt.ylabel('$\\ell\\,C^{\\alpha\\beta}_\\ell/(2\\pi)$',fontsize=18)
+    plt.xlim([2,2000])
+    plt.ylim([7E-10,2E-6])
+    plt.savefig('../Draft/Figs/c_ij_wl.pdf',bbox_inches='tight')
 
 
 def change_basis(c,m,ev) :
@@ -136,15 +141,18 @@ c_p_dfn=change_basis(c_ij_dfn,metric,e_o)
 if plot_stuff :
     plt.figure();
     ax=plt.gca()
-#ax.imshow([[0.,1.],[0.,1.]],extent=[700,1600,140,200],interpolation='bicubic',cmap=cm.summer,aspect='auto')
-#plt.text(220,160,'$p\\in[1,16]$',{'fontsize':16})
+    ax.imshow([[0.,1.],[0.,1.]],extent=[700,1600,140,200],interpolation='bicubic',cmap=cm.summer,aspect='auto')
+    plt.text(220,160,'$p\\in[1,16]$',{'fontsize':16})
     for i in np.arange(nbins) :
         c=c_p_fid[:,i]
-        col=cm.brg((i+0.5)/nbins)
+        col=cm.summer((i+0.5)/nbins)
         plt.plot(larr,c,color=col,lw=2)
     plt.ylabel("$D_\\ell^p$",fontsize=16)
     plt.xlabel("$\\ell$",fontsize=16)
+    plt.xlim([2,2000])
+    plt.ylim([0.5,300])
     plt.loglog()
+    plt.savefig('../Draft/Figs/d_p_wl.pdf',bbox_inches='tight')
 
 
 #Plot K-L eigenvectors
@@ -152,22 +160,24 @@ if plot_stuff :
     plt.figure()
     ax=plt.gca()
     zbarr=0.5*(z0bins+zfbins)
-#ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.35,-0.30],interpolation='bicubic',cmap=cm.winter,aspect='auto')
-#ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.42,-0.37],interpolation='bicubic',cmap=cm.autumn,aspect='auto')
-#plt.text(1.7,-0.34,'$1^{\\rm st}\\,\\,{\\rm mode}$',{'fontsize':16})
-#plt.text(1.7,-0.41,'$2^{\\rm nd}\\,\\,{\\rm mode}$',{'fontsize':16})
-    for i in (1+np.arange(9))*10 :
+    ax.plot([0.5,2.3],[0,0],'k--')
+    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.35,-0.30],interpolation='bicubic',cmap=cm.winter,aspect='auto')
+    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.42,-0.37],interpolation='bicubic',cmap=cm.autumn,aspect='auto')
+    plt.text(1.345,-0.335,'$1^{\\rm st}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
+    plt.text(1.33 ,-0.41 ,'$2^{\\rm nd}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
+    for i in (1+np.arange(199))*10 :
         ax.plot(zbarr,e_o[  i,:,0]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens)),'o-',markeredgewidth=0,
-                color=cm.winter((i+0.5)/101))
+                color=cm.winter((i+0.5)/2001))
         if e_o[i,2,1]>0 :
             sign=-1
         else :
             sign=1
         ax.plot(zbarr,sign*e_o[  i,:,1]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens)),'o-',
-                markeredgewidth=0,color=cm.autumn((i+0.5)/101))
+                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
     plt.xlabel('$z_\\alpha$',fontsize=18)
     plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf E}_\\ell)^1_\\alpha$',fontsize=18)
-
+    plt.xlim([0.5,2.3])
+    plt.savefig('../Draft/Figs/kl_modes_wl.pdf',bbox_inches='tight')
 
 fisher=(larr+0.5)[:,None]*(c_p_dfn/c_p_fid)**2
 fish_permode=np.sum(fisher,axis=0)
@@ -183,7 +193,8 @@ if plot_stuff :
     plt.ylabel('${\\rm Relative\\,information\\,\\,content}$',fontsize=18)
     plt.yscale('log')
     plt.xlim([0.9,nbins+0.1])
-    plt.ylim([3E-5,1.2])
+    plt.ylim([3E-7,1.2])
+    plt.savefig('../Draft/Figs/information_wl.pdf',bbox_inches='tight')
     
 if plot_stuff :
     plt.show()
