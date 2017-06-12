@@ -14,12 +14,15 @@ except AttributeError:
 # CCL extension module
 _ccllib = Extension(
             "_ccllib",
-               ["pyccl/ccl.i",],
-               libraries = ['m', 'gsl', 'gslcblas', 'ccl','fftw3','fftw3_threads','gomp'],
-               include_dirs = [numpy_include, "include/", "class/include"],
-               extra_compile_args=['-O4', '-std=c99','-fopenmp'],
-               swig_opts=['-threads'],
-           )
+            ["pyccl/ccl.i",],
+            library_dirs=['/usr/local/shared/intel/Compiler/11.1/064/lib/intel64/'],
+            #               libraries = ['m', 'gsl', 'gslcblas', 'ccl','fftw3','fftw3_threads','gomp'],
+            libraries = ['m', 'gsl', 'gslcblas', 'ccl','fftw3','fftw3_threads','gomp','iomp5'],
+            include_dirs = [numpy_include, "include/", "class/include"],
+            #               extra_compile_args=['-O4', '-std=c99','-fopenmp'],
+            extra_compile_args=['-std=c99','-openmp'],
+            swig_opts=['-threads'],
+            )
 
 # CCL setup script
 setup(  name         = "pyccl",

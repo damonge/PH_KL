@@ -5,9 +5,12 @@ from scipy.special import erf
 import pyccl as ccl
 from scipy.integrate import quad
 import matplotlib.cm as cm
+import common_gofish as cgf
 
 SZ_RED=0.02
 LMAX=100
+nsamp=1
+ZMAX=2
 
 def sz_red(z) :
     return SZ_RED*(1+z)
@@ -35,13 +38,13 @@ def get_edges(zmin,zmax,sz,frac_sigma) :
 #Selection function for the whole sample
 data=np.loadtxt("nz_red.txt",unpack=True)
 nz_red=interp1d(data[0],data[1],bounds_error=False,fill_value=0)
-zarr=np.linspace(0,2,1024)
+zarr=np.linspace(0,ZMAX,1024)
 bzarr=bz_red(zarr)
 nzarr=nz_red(zarr)
 
 #Selection function for individual bins
 #z0bins,zfbins,sz_bins,dum1,dum2,dum3=np.loadtxt("/home/damonge/Science/Codes/ReformCodes/GoFish/curves_LSST/bins_red.txt",unpack=True)
-z0bins,zfbins=get_edges(0.5,1.4,SZ_RED,3.0)
+z0bins,zfbins=get_edges(0.5,1.4,SZ_RED,nsamp)
 nbins=len(z0bins)
 nz_bins=np.array([nzarr*pdf_photo(zarr,z0,zf,sz_red(0.5*(z0+zf))) for z0,zf in zip(z0bins,zfbins)])
 #nz_bins=np.array([nzarr*pdf_photo(zarr,z0,zf,sz) for z0,zf,sz in zip(z0bins,zfbins,sz_bins)])
@@ -52,56 +55,62 @@ xcorr/=np.sqrt(np.diag(xcorr)[:,None]*np.diag(xcorr)[None,:])
 ndens=np.array([np.sum(nz)*(zarr[1]-zarr[0]) for nz in nz_bins])
 print quad(nz_red,0,5)[0],np.sum(nzarr*(zarr[1]-zarr[0])),np.sum(ndens)
 
-#Plot N(z)
-plt.figure();
-for i in nbins-1-np.arange(nbins) :
-    nz=nz_bins[i]
-    ran=np.where(nz>1E-3*np.amax(nz))[0]
-    plt.plot(zarr[ran],nz[ran],color=cm.brg((nbins-i-0.5)/nbins),lw=2)
-plt.plot(zarr,nzarr,'k-',lw=2)
-plt.xlabel('$z$',fontsize=18)
-plt.ylabel('$N(z)\\,\\,[{\\rm arcmin}^{-2}]$',fontsize=18)
-#plt.savefig("../Draft/Figs/nz_lsst_fnl.pdf",bbox_inches='tight')
+run_name="sz%.2lf_"%SZ_RED+"ns%d_"%nsamp+"lmx%d"%LMAX
+np.savetxt("bins_"+run_name+".txt",np.transpose([z0bins,zfbins,sz_red(0.5*(z0bins+zfbins))]),fmt='%lf %lf %lf 0 0 '+'%d'%LMAX,header='[1]-z0 [2]-zf [3]-sz [4]-marg_sz [5]-marg_bz [6]-lmax')
+zb_arr=np.linspace(0,ZMAX,16); bb_arr=bz_red(zb_arr); np.savetxt("bz_"+run_name+".txt",np.transpose([zb_arr,bb_arr]),fmt='%lf %lf 0');
+np.savetxt("nz_"+run_name+".txt",np.transpose([zarr,nzarr]),fmt='%lf %lf')
 
-def compute_cls(oc,ob,h,a_s,ns,w,fNL=1.,fname_out=False) :
-    #Fiducial cosmological parameters
-    cosmo=ccl.Cosmology(Omega_c=oc,Omega_b=ob,h=h,A_s=a_s,n_s=ns,w0=w,fNL=fNL)#,
-#                        transfer_function='eisenstein_hu')
-    print ccl.sigma8(cosmo)
-
-    #Tracers
-    tracers=[]
-    for i in np.arange(nbins) :
-        print i
-        tracers.append(ccl.ClTracer(cosmo,tracer_type='nc',z=zarr,n=nz_bins[i],bias=bzarr))
-#        tracers.append(ccl.ClTracer(cosmo,tracer_type='wl',z=zarr,n=nz_bins[i]))#,bias=bzarr))
-
-    #Power spectra
-    c_ij=np.zeros([LMAX+1,nbins,nbins])
-    for i1 in np.arange(nbins) :
-        for i2 in np.arange(i1,nbins) :
-            print i1,i2
-            if xcorr[i1,i2]<-1E-6 :
-                c_ij[:,i1,i2]=0
-            else :
-                c_ij[:,i1,i2]=ccl.angular_cl(cosmo,tracers[i1],tracers[i2],np.arange(LMAX+1),l_limber=20)
-            if i1!=i2 :
-                c_ij[:,i2,i1]=c_ij[:,i1,i2]
-
-    c_ij[:2,:,:]=0
-    if fname_out!=False :
-        np.save(fname_out,c_ij)
-    return c_ij
+##Plot N(z)
+#plt.figure();
+#for i in nbins-1-np.arange(nbins) :
+#    nz=nz_bins[i]
+#    ran=np.where(nz>1E-3*np.amax(nz))[0]
+#    plt.plot(zarr[ran],nz[ran],color=cm.brg((nbins-i-0.5)/nbins),lw=2)
+#plt.plot(zarr,nzarr,'k-',lw=2)
+#plt.xlabel('$z$',fontsize=18)
+#plt.ylabel('$N(z)\\,\\,[{\\rm arcmin}^{-2}]$',fontsize=18)
+##plt.savefig("../Draft/Figs/nz_lsst_fnl.pdf",bbox_inches='tight')
+#
+#def compute_cls(oc,ob,h,a_s,ns,w,fNL=1.,fname_out=False) :
+#    #Fiducial cosmological parameters
+#    cosmo=ccl.Cosmology(Omega_c=oc,Omega_b=ob,h=h,A_s=a_s,n_s=ns,w0=w,fNL=fNL)#,
+##                        transfer_function='eisenstein_hu')
+#    print ccl.sigma8(cosmo)
+#
+#    #Tracers
+#    tracers=[]
+#    for i in np.arange(nbins) :
+#        print i
+#        tracers.append(ccl.ClTracer(cosmo,tracer_type='nc',z=zarr,n=nz_bins[i],bias=bzarr))
+##        tracers.append(ccl.ClTracer(cosmo,tracer_type='wl',z=zarr,n=nz_bins[i]))#,bias=bzarr))
+#
+#    #Power spectra
+#    c_ij=np.zeros([LMAX+1,nbins,nbins])
+#    for i1 in np.arange(nbins) :
+#        for i2 in np.arange(i1,nbins) :
+#            print i1,i2
+#            if xcorr[i1,i2]<-1E-6 :
+#                c_ij[:,i1,i2]=0
+#            else :
+#                c_ij[:,i1,i2]=ccl.angular_cl(cosmo,tracers[i1],tracers[i2],np.arange(LMAX+1),l_limber=20)
+#            if i1!=i2 :
+#                c_ij[:,i2,i1]=c_ij[:,i1,i2]
+#
+#    c_ij[:2,:,:]=0
+#    if fname_out!=False :
+#        np.save(fname_out,c_ij)
+#    return c_ij
 
 #Compute power spectra
 fnl0=0.0
 dfnl=0.5
-c_ij_fid=compute_cls(0.27,0.045,0.69,2.2E-9,0.96,-1.,fNL=fnl0,fname_out='cl_fid')
-c_ij_mfn=compute_cls(0.27,0.045,0.69,2.2E-9,0.96,-1.,fNL=fnl0-dfnl,fname_out='cl_mfn')
-c_ij_pfn=compute_cls(0.27,0.045,0.69,2.2E-9,0.96,-1.,fNL=fnl0+dfnl,fname_out='cl_pfn')
-c_ij_fid=np.load('cl_fid.npy')
-c_ij_mfn=np.load('cl_mfn.npy')
-c_ij_pfn=np.load('cl_pfn.npy')
+c_ij_fid,c_ij_mfn,c_ij_pfn=cgf.run_gofish(run_name,LMAX,'fnl',0.0,0.5)
+#c_ij_fid=compute_cls(0.27,0.045,0.69,2.2E-9,0.96,-1.,fNL=fnl0,fname_out='cl_fid')
+#c_ij_mfn=compute_cls(0.27,0.045,0.69,2.2E-9,0.96,-1.,fNL=fnl0-dfnl,fname_out='cl_mfn')
+#c_ij_pfn=compute_cls(0.27,0.045,0.69,2.2E-9,0.96,-1.,fNL=fnl0+dfnl,fname_out='cl_pfn')
+#c_ij_fid=np.load('cl_fid.npy')
+#c_ij_mfn=np.load('cl_mfn.npy')
+#c_ij_pfn=np.load('cl_pfn.npy')
 n_ij_fid=np.zeros_like(c_ij_fid)
 for i1 in np.arange(nbins) :
     n_ij_fid[:,i1,i1]=(np.pi/180./60.)**2/ndens[i1]
@@ -130,7 +139,6 @@ plt.loglog()
 plt.xlabel('$\\ell$',fontsize=18)
 plt.ylabel('$\\ell\\,C^{\\alpha\\beta}_\\ell/(2\\pi)$',fontsize=18)
 #plt.savefig("../Draft/Figs/c_ij_fnl.pdf",bbox_inches='tight')
-#plt.show(); exit(1)
 
 def change_basis(c,m,ev) :
     print np.shape(c), np.shape(m), np.shape(ev)

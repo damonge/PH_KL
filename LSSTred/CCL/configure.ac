@@ -3,8 +3,10 @@
 
 AC_PREREQ([2.4])
 AC_INIT([CCL], [0.0], [github.com/LSSTDESC/CCL])
-AM_INIT_AUTOMAKE([-Wall subdir-objects foreign serial-tests])
-AM_PROG_AR
+#AM_INIT_AUTOMAKE([-Wall subdir-objects foreign serial-tests])
+AM_INIT_AUTOMAKE([-Wall subdir-objects])
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+#AM_PROG_AR
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
@@ -41,8 +43,8 @@ AC_CHECK_FUNCS([pow sqrt])
 
 AC_CONFIG_FILES([Makefile
 		 include/Makefile
-		 class/Makefile
-		 angpow/Makefile])
+		 class/Makefile])
+#		 angpow/Makefile])
 
 AC_OUTPUT
 
