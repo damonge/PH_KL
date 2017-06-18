@@ -7,10 +7,10 @@ from scipy.integrate import quad
 import matplotlib.cm as cm
 import common_gofish as cgf
 
-plot_stuff=False
+plot_stuff=True
 SZ_RED=0.02
 LMAX=500
-nsamp=0.5
+nsamp=1
 ZMAX=2
 tracertype='gal_clustering'
 parname='fnl'
