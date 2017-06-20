@@ -2901,6 +2901,37 @@ int input_read_parameters(
       }
     }
 
+    if(ppt->has_lensing_shear==_TRUE_) {
+      int siz=0;
+      double *ldum=malloc(_TRACER_NUM_MAX_*sizeof(double));
+
+      class_call(parser_read_list_of_doubles(pfc,"lensing_modulation",&siz,&ldum,&flag1,errmsg),
+		 errmsg,errmsg);
+      if(siz!=ptr->n_tracers_wl) {
+	fprintf(stderr,"shit %d %d\n",siz,ptr->n_tracers_wl);
+	exit(1);
+      }
+      for(ii=0;ii<ptr->n_tracers_wl;ii++) {
+	ptr->lensmod[ii]=ldum[ii];
+      }
+    }
+
+    if(ppt->has_intrinsic_alignment==_TRUE_) {
+      int siz=0;
+      double *ldum=malloc(_TRACER_NUM_MAX_*sizeof(double));
+
+      class_call(parser_read_list_of_doubles(pfc,"alignment_modulation",&siz,&ldum,&flag1,errmsg),
+		 errmsg,errmsg);
+      if(siz!=ptr->n_tracers_wl) {
+	fprintf(stderr,"shit %d %d\n",siz,ptr->n_tracers_wl);
+	exit(1);
+      }
+      for(ii=0;ii<ptr->n_tracers_wl;ii++) {
+	ptr->iamod[ii]=ldum[ii];
+      }
+    }
+
+
     if(ppt->has_intrinsic_alignment==_TRUE_) {
       class_call(parser_read_string(pfc,
 				    "alignment_bias_function",

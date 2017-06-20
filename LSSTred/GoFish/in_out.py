@@ -322,6 +322,8 @@ def write_class_param_file(par,param_vary,sign_vary,prefix_out) :
 
     n_tracers_nc=0
     n_tracers_wl=0
+    lmod_string=" "
+    imod_string=" "
     photoz_nc_string=" "
     photoz_wl_string=" "
     selection_nc_string=" "
@@ -384,6 +386,8 @@ def write_class_param_file(par,param_vary,sign_vary,prefix_out) :
             n_tracers_nc+=1
         elif tr.tracer_type=="gal_shear" :
             photoz_wl_string+="1 "
+            lmod_string+="1.0 "
+            imod_string+="1.0 "
             selection_wl_string+="tophat "
             bins_wl_string+=bins_fname+" "
             nz_wl_string+=tr.nz_file+" "
@@ -514,6 +518,8 @@ def write_class_param_file(par,param_vary,sign_vary,prefix_out) :
     strout+="selection_bins_wl = "+bins_wl_string+"\n"
     strout+="use_photoz_nc = "+photoz_nc_string+"\n"
     strout+="use_photoz_wl = "+photoz_wl_string+"\n"
+    strout+="lensing_modulation = "+lmod_string+"\n"
+    strout+="alignment_modulation = "+imod_string+"\n"
     strout+="dNdz_selection_nc ="+nz_nc_string+"\n"
     strout+="dNdz_selection_wl ="+nz_wl_string+"\n"
     strout+="bias_function = "+bz_string+"\n"

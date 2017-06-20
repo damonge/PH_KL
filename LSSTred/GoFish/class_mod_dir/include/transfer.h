@@ -112,6 +112,9 @@ struct transfers {
   //@{
   int n_tracers_wl; //Number of tracers
   
+  double lensmod[_TRACER_NUM_MAX_];
+  double iamod[_TRACER_NUM_MAX_];
+
   FileName nz_file_name_wl[_TRACER_NUM_MAX_];
   /**< dN/dz (selection function) input file name */
   int nz_size_wl[_TRACER_NUM_MAX_];

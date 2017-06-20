@@ -3460,7 +3460,7 @@ int transfer_sources(
 	    //Another option would be just:
 	    //bI=aI;
 
-	    rescaling = bI*fred*selection[index_tau]/(x*x);
+	    rescaling = bI*fred*selection[index_tau]*ptr->iamod[ptr->selection_tracer_wl[bin]]/(x*x);
 	  }
 	  sources[index_tau] *= rescaling;
         }
@@ -3510,7 +3510,8 @@ int transfer_sources(
              (in tau = tau_0, set source = 0 to avoid division by zero;
              regulated anyway by Bessel).
           */
-	  rescaling=ptr->glb_selection_lns_wl[bin][index_tau];
+
+	  rescaling=ptr->glb_selection_lns_wl[bin][index_tau]*ptr->lensmod[ptr->selection_tracer_wl[bin]];
 
           /* copy from input array to output array */
           sources[index_tau] *= rescaling;
