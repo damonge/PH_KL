@@ -151,7 +151,7 @@ def read_cls_class(fname) :
 
     return dic
 
-def run_gofish(rname,lmx,parname,par0,dpar,trtype) :
+def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False) :
     if trtype=='gal_clustering' :
         l_limber=lmx+1
     else :
@@ -175,15 +175,18 @@ def run_gofish(rname,lmx,parname,par0,dpar,trtype) :
         stout+='sbias_file= stupid\n'
         stout+='ebias_file= stupid\n'
     else :
-        stout+='abias_file= stupid\n'
-        stout+='rfrac_file= stupid\n'
+        stout+='abias_file= curves_LSST/az_gold.txt\n'
+        stout+='rfrac_file= curves_LSST/rf_gold.txt\n'
         stout+='sigma_gamma= 0.28\n'
     stout+='use_tracer= yes\n'
     stout+='\n'
     stout+='[CLASS parameters]\n'
     stout+='lmax_lss= %d\n'%lmx
     stout+='lmin_limber= %d\n'%l_limber
-    stout+='include_alignment= no\n'
+    if w_IA :
+        stout+='include_alignment= yes\n'
+    else :
+        stout+='include_alignment= no\n'
     stout+='include_rsd= no\n'
     stout+='include_magnification= no\n'
     stout+='include_gr_vel= no\n'
