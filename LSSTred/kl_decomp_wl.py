@@ -7,7 +7,7 @@ from scipy.integrate import quad
 import matplotlib.cm as cm
 import common_gofish as cgf
 
-plot_stuff=True
+plot_stuff=False
 SZ_RED=0.05
 LMAX=2000
 nsamp=1

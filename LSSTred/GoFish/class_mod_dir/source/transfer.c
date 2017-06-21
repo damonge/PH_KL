@@ -3456,7 +3456,7 @@ int transfer_sources(
 	    /* alignment source =  [- (dz/dtau) W(z)] * b^I * x_red * delta_m(k,tau) /(k*chi)^2 */
 	    //This is for the parametrization in 1506.02671
 	    Dz=pvecback[pba->index_bg_D]*ppt->inv_growth_0;
-	    bI=-aI*(pba->Omega0_b+pba->Omega0_cdm)*0.0134/Dz;
+	    bI=-aI*0.3*0.0134/Dz;
 	    //Another option would be just:
 	    //bI=aI;
 
