@@ -3255,12 +3255,12 @@ int transfer_sources(
 	    }
 	    else
 	      bk=b_bias;
-            rescaling = bk*selection[index_tau];
+            rescaling = bk*selection[index_tau]*ptr->densmod[ptr->selection_tracer_nc[bin]];
 	  }
 
           /* redhsift space distorsion source = - [- (dz/dtau) W(z)] * (k/H) * theta(k,tau) */
           if (_index_tt_in_range_(ptr->index_tt_rsd,     ptr->selection_num_nc, ppt->has_nc_rsd1))
-            rescaling = selection[index_tau]/pvecback[pba->index_bg_H]/pvecback[pba->index_bg_a];
+            rescaling = selection[index_tau]/pvecback[pba->index_bg_H]/pvecback[pba->index_bg_a]*ptr->densmod[ptr->selection_tracer_nc[bin]];
 
           if (_index_tt_in_range_(ptr->index_tt_d0,      ptr->selection_num_nc, ppt->has_nc_rsd2))
             rescaling = (e_bias-3.)*selection[index_tau]*pvecback[pba->index_bg_H]*pvecback[pba->index_bg_a]
@@ -3361,7 +3361,7 @@ int transfer_sources(
           */
 	  
 	  if (_index_tt_in_range_(ptr->index_tt_nc_lens, ptr->selection_num_nc, ppt->has_nc_lens)) {
-	    rescaling=-ptr->glb_selection_lns_lns[bin][index_tau];
+	    rescaling=-ptr->glb_selection_lns_lns[bin][index_tau]*ptr->mbmod[ptr->selection_tracer_nc[bin]];
 	  }
 	  
 	  if (_index_tt_in_range_(ptr->index_tt_nc_g4, ptr->selection_num_nc, ppt->has_nc_gr4)) {

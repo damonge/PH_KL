@@ -10,23 +10,21 @@ import common_gofish as cgf
 plot_stuff=True
 SZ_RED=0.05
 LMAX=2000
-nsamp=3
-ZMAX=3
-tracertype='gal_shear'
-parname='w0'
-par0=-1.0
-dpar=0.05
+nsamp=1
+ZMAX=4
 sigma_gamma=0.28
-zedge_lo=0.3
+zedge_lo=0.1
 zedge_hi=2.5
-prefix="wl0"
 nzfile='nz_blue.txt'
 
-def sz_red(z) :
+def sphz_red(z) :
     return SZ_RED*(1+z)
 
 def bz_red(z) :
-    return 1+z
+    return 1+0.8*z
+
+def sz_red(z) :
+    return np.ones_like(z)*0.6
 
 def pdf_photo(z,z0,zf,sz) :
     denom=1./np.sqrt(2*sz*sz)
@@ -50,16 +48,21 @@ data=np.loadtxt(nzfile,unpack=True)
 nz_red=interp1d(data[0],data[1],bounds_error=False,fill_value=0)
 zarr=np.linspace(0,ZMAX,1024)
 bzarr=bz_red(zarr)
+szarr=sz_red(zarr)
 nzarr=nz_red(zarr)
+
+np.savetxt("outputs_gc_mb/bz.txt",np.transpose([zarr,bzarr]))
+np.savetxt("outputs_gc_mb/sz.txt",np.transpose([zarr,szarr]))
+np.savetxt("outputs_gc_mb/nz.txt",np.transpose([zarr,nzarr]))
 
 #Selection function for individual bins
 z0bins,zfbins=get_edges(zedge_lo,zedge_hi,SZ_RED,nsamp)
 nbins=len(z0bins)
-nz_bins=np.array([nzarr*pdf_photo(zarr,z0,zf,sz_red(0.5*(z0+zf))) for z0,zf in zip(z0bins,zfbins)])
+nz_bins=np.array([nzarr*pdf_photo(zarr,z0,zf,sphz_red(0.5*(z0+zf))) for z0,zf in zip(z0bins,zfbins)])
 ndens=np.array([np.sum(nz)*(zarr[1]-zarr[0]) for nz in nz_bins])
-np.savetxt("outputs_wl0_IA_sz0.05_ns1_lmx2000/bins.txt",np.transpose([0.5*(z0bins+zfbins),0.5*(zfbins-z0bins),sz_red(0.5*(z0bins+zfbins))]))
-num_modes=6
-
+np.savetxt("outputs_gc_mb/bins.txt",np.transpose([0.5*(z0bins+zfbins),0.5*(zfbins-z0bins),sphz_red(0.5*(z0bins+zfbins))]))
+print nbins
+exit(1)
 data_ll=cgf.read_cls_class("outputs_wl0_IA_sz0.05_ns1_lmx2000/run_lens_lenscl.dat")
 data_ii=cgf.read_cls_class("outputs_wl0_IA_sz0.05_ns1_lmx2000/run_ia_iacl.dat")
 data_li=cgf.read_cls_class("outputs_wl0_IA_sz0.05_ns1_lmx2000/run_lens_iacl.dat")

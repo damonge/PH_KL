@@ -84,6 +84,9 @@ struct transfers {
   double * bz_bz[_TRACER_NUM_MAX_];
   double * bz_ddbz[_TRACER_NUM_MAX_];
 
+  double densmod[_TRACER_NUM_MAX_];
+  double mbmod[_TRACER_NUM_MAX_];
+
   FileName sz_file_name[_TRACER_NUM_MAX_];
   /**< s(z) (magnification bias function) input file name */
   int sz_size[_TRACER_NUM_MAX_];

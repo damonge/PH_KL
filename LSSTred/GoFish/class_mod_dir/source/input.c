@@ -2726,6 +2726,37 @@ int input_read_parameters(
 	  sprintf(ptr->sz_file_name[ii],"%s",words[ii]);
 	}
       }
+      
+    }
+
+    if(ppt->has_nc_lens==_TRUE_) {
+      int siz=0;
+      double *ldum=malloc(_TRACER_NUM_MAX_*sizeof(double));
+      
+      class_call(parser_read_list_of_doubles(pfc,"magnification_modulation",&siz,&ldum,&flag1,errmsg),
+		 errmsg,errmsg);
+      if(siz!=ptr->n_tracers_nc) {
+	fprintf(stderr,"shit %d %d\n",siz,ptr->n_tracers_nc);
+	exit(1);
+      }
+      for(ii=0;ii<ptr->n_tracers_nc;ii++) {
+	ptr->mbmod[ii]=ldum[ii];
+      }
+    }
+
+    if(ppt->has_nc_density==_TRUE_) {
+      int siz=0;
+      double *ldum=malloc(_TRACER_NUM_MAX_*sizeof(double));
+      
+      class_call(parser_read_list_of_doubles(pfc,"density_modulation",&siz,&ldum,&flag1,errmsg),
+		 errmsg,errmsg);
+      if(siz!=ptr->n_tracers_nc) {
+	fprintf(stderr,"shit %d %d\n",siz,ptr->n_tracers_nc);
+	exit(1);
+      }
+      for(ii=0;ii<ptr->n_tracers_nc;ii++) {
+	ptr->densmod[ii]=ldum[ii];
+      }
     }
 
     if((ppt->has_nc_rsd2==_TRUE_) || (ppt->has_nc_rsd3==_TRUE_) || 
