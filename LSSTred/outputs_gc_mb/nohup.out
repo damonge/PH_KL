@@ -1,0 +1,91 @@
+Bin 0 mean 0.128205, width 0.028205, photo-z 0.056410, tracer 0
+Bin 1 mean 0.186062, width 0.029652, photo-z 0.059303, tracer 0
+Bin 2 mean 0.246885, width 0.031172, photo-z 0.062344, tracer 0
+Bin 3 mean 0.310828, width 0.032771, photo-z 0.065541, tracer 0
+Bin 4 mean 0.378050, width 0.034451, photo-z 0.068903, tracer 0
+Bin 5 mean 0.448720, width 0.036218, photo-z 0.072436, tracer 0
+Bin 6 mean 0.523013, width 0.038075, photo-z 0.076151, tracer 0
+Bin 7 mean 0.601116, width 0.040028, photo-z 0.080056, tracer 0
+Bin 8 mean 0.683225, width 0.042081, photo-z 0.084161, tracer 0
+Bin 9 mean 0.769544, width 0.044239, photo-z 0.088477, tracer 0
+Bin 10 mean 0.860290, width 0.046507, photo-z 0.093014, tracer 0
+Bin 11 mean 0.955689, width 0.048892, photo-z 0.097784, tracer 0
+Bin 12 mean 1.055981, width 0.051400, photo-z 0.102799, tracer 0
+Bin 13 mean 1.161416, width 0.054035, photo-z 0.108071, tracer 0
+Bin 14 mean 1.272258, width 0.056806, photo-z 0.113613, tracer 0
+Bin 15 mean 1.388784, width 0.059720, photo-z 0.119439, tracer 0
+Bin 16 mean 1.511285, width 0.062782, photo-z 0.125564, tracer 0
+Bin 17 mean 1.640069, width 0.066002, photo-z 0.132003, tracer 0
+Bin 18 mean 1.775457, width 0.069386, photo-z 0.138773, tracer 0
+Bin 19 mean 1.917789, width 0.072945, photo-z 0.145889, tracer 0
+Bin 20 mean 2.067419, width 0.076685, photo-z 0.153371, tracer 0
+Bin 21 mean 2.224722, width 0.080618, photo-z 0.161236, tracer 0
+Bin 22 mean 2.390093, width 0.084752, photo-z 0.169505, tracer 0
+Bin 23 mean 0.128205, width 0.028205, photo-z 0.056410, tracer 1
+Bin 24 mean 0.186062, width 0.029652, photo-z 0.059303, tracer 1
+Bin 25 mean 0.246885, width 0.031172, photo-z 0.062344, tracer 1
+Bin 26 mean 0.310828, width 0.032771, photo-z 0.065541, tracer 1
+Bin 27 mean 0.378050, width 0.034451, photo-z 0.068903, tracer 1
+Bin 28 mean 0.448720, width 0.036218, photo-z 0.072436, tracer 1
+Bin 29 mean 0.523013, width 0.038075, photo-z 0.076151, tracer 1
+Bin 30 mean 0.601116, width 0.040028, photo-z 0.080056, tracer 1
+Bin 31 mean 0.683225, width 0.042081, photo-z 0.084161, tracer 1
+Bin 32 mean 0.769544, width 0.044239, photo-z 0.088477, tracer 1
+Bin 33 mean 0.860290, width 0.046507, photo-z 0.093014, tracer 1
+Bin 34 mean 0.955689, width 0.048892, photo-z 0.097784, tracer 1
+Bin 35 mean 1.055981, width 0.051400, photo-z 0.102799, tracer 1
+Bin 36 mean 1.161416, width 0.054035, photo-z 0.108071, tracer 1
+Bin 37 mean 1.272258, width 0.056806, photo-z 0.113613, tracer 1
+Bin 38 mean 1.388784, width 0.059720, photo-z 0.119439, tracer 1
+Bin 39 mean 1.511285, width 0.062782, photo-z 0.125564, tracer 1
+Bin 40 mean 1.640069, width 0.066002, photo-z 0.132003, tracer 1
+Bin 41 mean 1.775457, width 0.069386, photo-z 0.138773, tracer 1
+Bin 42 mean 1.917789, width 0.072945, photo-z 0.145889, tracer 1
+Bin 43 mean 2.067419, width 0.076685, photo-z 0.153371, tracer 1
+Bin 44 mean 2.224722, width 0.080618, photo-z 0.161236, tracer 1
+Bin 45 mean 2.390093, width 0.084752, photo-z 0.169505, tracer 1
+Binary output
+[WARNING: input line not recognized and not taken into account: 'weak lensing contributions=lensing_shear, intrinsic_alignment']
+[WARNING: input line not recognized and not taken into account: 'r=0.000000E+00']
+[WARNING: input line not recognized and not taken into account: 'n_t=scc']
+[WARNING: input line not recognized and not taken into account: 'alpha_t=scc']
+[WARNING: input line not recognized and not taken into account: 'l_max_scalars=0']
+[WARNING: input line not recognized and not taken into account: 'l_max_tensors=0']
+[WARNING: input line not recognized and not taken into account: 'number_of_tracers_wl=0']
+Running CLASS version v2.4.4
+Computing background
+ -> ncdm species i=1 sampled with 11 (resp. 5) points for purpose of background (resp. perturbation) integration. In the relativistic limit it gives Delta N_eff = 1.0132
+ -> total N_eff = 3.046 (sumed over ultra-relativistic and ncdm species)
+ -> non-cold dark matter species with i=1 has m_i = 6.000000e-02 eV (so m_i / omega_i =9.318986e+01 eV)
+ -> age = 13.841728 Gyr
+ -> conformal age = 14185.432367 Mpc
+Computing thermodynamics with Y_He=0.2478
+ -> recombination at z = 1089.216827
+    corresponding to conformal time = 280.869808 Mpc
+    with comoving sound horizon = 144.716705 Mpc
+    angular diameter distance = 12.753942 Mpc
+    and sound horizon angle 100*theta_s = 1.040786
+ -> baryon drag stops at z = 1059.833883
+    corresponding to conformal time = 286.646779 Mpc
+    with comoving sound horizon rs = 147.331459 Mpc
+ -> reionization  at z = 8.294052
+    corresponding to conformal time = 4946.570393 Mpc
+Computing sources
+Computing primordial spectra (analytic spectrum)
+Computing non-linear matter power spectrum with Halofit (including update Takahashi et al. 2012 and Bird 2014)
+Computing transfers
+Mode 0 : 3.120 GB for transfer functions here
+          tt_size = 92, l_size= 88, q_size= 51716
+Final transfers
+          1.560 GB for transfer functions here
+          tt_size = 46, l_size= 88, q_size= 51716
+Reading bias from bz.txt
+Reading s-bias from sz.txt
+Reading bias from bz.txt
+Reading s-bias from sz.txt
+Computing unlensed linear spectra
+Mode 0 : 0.001 GB for power spectra here
+          ct_size = 1081, l_size= 88, ic_ic_size= 1
+ -> sigma8=0.825614 (computed till k = 13.9014 h/Mpc)
+No lensing requested. Lensing module skipped.
+Writing output files in run_dens_mb... 
