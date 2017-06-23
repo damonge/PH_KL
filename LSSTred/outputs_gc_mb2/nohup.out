@@ -1,0 +1,50 @@
+Bin 0 mean 0.189189, width 0.089189, photo-z 0.059459, tracer 0
+Bin 1 mean 0.382031, width 0.103652, photo-z 0.069102, tracer 0
+Bin 2 mean 0.606144, width 0.120461, photo-z 0.080307, tracer 0
+Bin 3 mean 0.866600, width 0.139995, photo-z 0.093330, tracer 0
+Bin 4 mean 1.169291, width 0.162697, photo-z 0.108465, tracer 0
+Bin 5 mean 1.521068, width 0.189080, photo-z 0.126053, tracer 0
+Bin 6 mean 1.929890, width 0.219742, photo-z 0.146495, tracer 0
+Binary output
+[WARNING: input line not recognized and not taken into account: 'weak lensing contributions=lensing_shear, intrinsic_alignment']
+[WARNING: input line not recognized and not taken into account: 'r=0.000000E+00']
+[WARNING: input line not recognized and not taken into account: 'n_t=scc']
+[WARNING: input line not recognized and not taken into account: 'alpha_t=scc']
+[WARNING: input line not recognized and not taken into account: 'l_max_scalars=0']
+[WARNING: input line not recognized and not taken into account: 'l_max_tensors=0']
+[WARNING: input line not recognized and not taken into account: 'number_of_tracers_wl=0']
+Running CLASS version v2.4.4
+Computing background
+ -> ncdm species i=1 sampled with 11 (resp. 5) points for purpose of background (resp. perturbation) integration. In the relativistic limit it gives Delta N_eff = 1.0132
+ -> total N_eff = 3.046 (sumed over ultra-relativistic and ncdm species)
+ -> non-cold dark matter species with i=1 has m_i = 6.000000e-02 eV (so m_i / omega_i =9.318986e+01 eV)
+ -> age = 13.841728 Gyr
+ -> conformal age = 14185.432367 Mpc
+Computing thermodynamics with Y_He=0.2478
+ -> recombination at z = 1089.216827
+    corresponding to conformal time = 280.869808 Mpc
+    with comoving sound horizon = 144.716705 Mpc
+    angular diameter distance = 12.753942 Mpc
+    and sound horizon angle 100*theta_s = 1.040786
+ -> baryon drag stops at z = 1059.833883
+    corresponding to conformal time = 286.646779 Mpc
+    with comoving sound horizon rs = 147.331459 Mpc
+ -> reionization  at z = 8.294052
+    corresponding to conformal time = 4946.570393 Mpc
+Computing sources
+Computing primordial spectra (analytic spectrum)
+Computing non-linear matter power spectrum with Halofit (including update Takahashi et al. 2012 and Bird 2014)
+Computing transfers
+Mode 0 : 0.475 GB for transfer functions here
+          tt_size = 14, l_size= 88, q_size= 51716
+Final transfers
+          0.237 GB for transfer functions here
+          tt_size = 7, l_size= 88, q_size= 51716
+Reading bias from bz.txt
+Reading s-bias from sz.txt
+Computing unlensed linear spectra
+Mode 0 : 0.000 GB for power spectra here
+          ct_size = 28, l_size= 88, ic_ic_size= 1
+ -> sigma8=0.825614 (computed till k = 13.9014 h/Mpc)
+No lensing requested. Lensing module skipped.
+Writing output files in run_mb_mb... 

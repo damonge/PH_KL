@@ -1,0 +1,11 @@
+# List of input/precision parameters passed
+# but not used (just for info)
+#
+weak lensing contributions = lensing_shear, intrinsic_alignment
+r = 0.000000E+00
+n_t = scc
+alpha_t = scc
+l_max_scalars = 0
+l_max_tensors = 0
+number_of_tracers_wl = 0
+write warnings = y
