@@ -2,6 +2,7 @@ import numpy as np
 import os
 import struct
 import array
+import pyccl as ccl
 
 def read_cls_class(fname) :
     f=open(fname,"rd")
@@ -162,6 +163,18 @@ def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False,llim=None) :
 
     print "WOO"
     stout=""
+#    stout+='[och2]\n'
+#    stout+='x= 0.1197\n'
+#    stout+='dx=0.0010\n'
+#    stout+='is_free=yes\n'
+#    stout+='onesided=0\n'
+#    stout+='\n'
+#    stout+='[A_s]\n'
+#    stout+='x= 2.19\n'
+#    stout+='dx=0.01\n'
+#    stout+='is_free=yes\n'
+#    stout+='onesided=0\n'
+#    stout+='\n'
     stout+='['+parname+']\n'
     stout+='x= %lE\n'%par0
     stout+='dx=%lE\n'%dpar
@@ -221,3 +234,27 @@ def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False,llim=None) :
         return dic_fid['cl_dd'],dic_mfn['cl_dd'],dic_pfn['cl_dd'],
     else :
         return dic_fid['cl_ll'],dic_mfn['cl_ll'],dic_pfn['cl_ll'],
+
+
+#def compute_cls(oc,ob,h,a_s,ns,w,nbins,zarr,nz_bins,lmax,fname_out=False) :
+#    cosmo=ccl.Cosmology(Omega_c=oc,Omega_b=ob,h=h,A_s=a_s,n_s=ns,w0=w)#,transfer_function='eisenstein_hu')
+def compute_cls(oc,ob,h,s8,ns,w,nbins,zarr,nz_bins,lmax,fname_out=False) :
+    cosmo=ccl.Cosmology(Omega_c=oc,Omega_b=ob,h=h,sigma8=s8,n_s=ns,w0=w)#,transfer_function='eisenstein_hu')
+    print ccl.sigma8(cosmo)
+
+    #Tracers
+    tracers=[]
+    for i in np.arange(nbins) :
+        tracers.append(ccl.ClTracer(cosmo,tracer_type='wl',z=zarr,n=nz_bins[i]))
+
+    #Power spectra
+    c_ij=np.zeros([lmax+1,nbins,nbins])
+    for i1 in np.arange(nbins) :
+        print i1
+        for i2 in np.arange(i1,nbins) :
+            c_ij[:,i1,i2]=ccl.angular_cl(cosmo,tracers[i1],tracers[i2],np.arange(lmax+1))#,l_limber=100)
+            if i1!=i2 :
+                c_ij[:,i2,i1]=c_ij[:,i1,i2]
+    if fname_out!=False :
+        np.save(fname_out,c_ij)
+    return c_ij

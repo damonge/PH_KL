@@ -6,6 +6,7 @@ import pyccl as ccl
 from scipy.integrate import quad
 import matplotlib.cm as cm
 import common_gofish as cgf
+import os
 
 plot_stuff=True
 SZ_RED=0.05
@@ -84,6 +85,35 @@ if plot_stuff:
 
 #Compute power spectra
 c_ij_fid,c_ij_mfn,c_ij_pfn=cgf.run_gofish(run_name,LMAX,parname,par0,dpar,tracertype,llim=-1)
+'''
+if os.path.isfile("cl_ccl_fid.npy") :
+    c_ij_fid2=np.load("cl_ccl_fid.npy")
+else :
+#    c_ij_fid2=cgf.compute_cls(0.26665181554912004,0.049498774782802395,0.67,2.19E-9,0.96,par0     ,
+#                              nbins,zarr,nz_bins,LMAX)
+    c_ij_fid2=cgf.compute_cls(0.26665181554912004,0.049498774782802395,0.67,0.84,0.96,par0     ,
+                              nbins,zarr,nz_bins,LMAX)
+    np.save("cl_ccl_fid",c_ij_fid2)
+if os.path.isfile("cl_ccl_mfn.npy") :
+    c_ij_mfn2=np.load("cl_ccl_mfn.npy")
+else :
+#    c_ij_mfn2=cgf.compute_cls(0.26665181554912004,0.049498774782802395,0.67,2.19E-9,0.96,par0-dpar,
+#                              nbins,zarr,nz_bins,LMAX)
+    c_ij_mfn2=cgf.compute_cls(0.26665181554912004,0.049498774782802395,0.67,0.84,0.96,par0-dpar,
+                              nbins,zarr,nz_bins,LMAX)
+    np.save("cl_ccl_mfn",c_ij_mfn2)
+if os.path.isfile("cl_ccl_pfn.npy") :
+    c_ij_pfn2=np.load("cl_ccl_pfn.npy")
+else :
+#    c_ij_pfn2=cgf.compute_cls(0.26665181554912004,0.049498774782802395,0.67,2.19E-9,0.96,par0+dpar,
+#                              nbins,zarr,nz_bins,LMAX)
+    c_ij_pfn2=cgf.compute_cls(0.26665181554912004,0.049498774782802395,0.67,0.84,0.96,par0+dpar,
+                              nbins,zarr,nz_bins,LMAX)
+    np.save("cl_ccl_pfn",c_ij_pfn2)
+c_ij_fid=c_ij_fid2
+c_ij_mfn=c_ij_mfn2
+c_ij_pfn=c_ij_pfn2
+'''
 n_ij_fid=np.zeros_like(c_ij_fid)
 for i1 in np.arange(nbins) :
     n_ij_fid[:,i1,i1]=sigma_gamma**2*(np.pi/180./60.)**2/ndens[i1]
@@ -111,7 +141,6 @@ if plot_stuff :
     plt.ylim([7E-10,2E-6])
     plt.savefig('../Draft/Figs/c_ij_wl.pdf',bbox_inches='tight')
 
-
 def change_basis(c,m,ev) :
     print np.shape(c), np.shape(m), np.shape(ev)
     return np.array([np.diag(np.dot(np.transpose(ev[l]),np.dot(m[l],np.dot(c[l],np.dot(m[l],ev[l])))))
@@ -136,6 +165,31 @@ isort=np.argsort(-np.sum(fisher,axis=0))
 e_o=e_v[:,:,isort]
 c_p_fid=change_basis(c_ij_fid,metric,e_o)
 c_p_dfn=change_basis(c_ij_dfn,metric,e_o)
+
+dprod_all=np.array([np.dot(c_ij_fid[l,:,:]-n_ij_fid[l,:,:],inv_cij[l,:,:]) for l in np.arange(LMAX+1)])
+fish_all=(larr+0.5)*np.array([np.trace(np.dot(d,d)) for d in dprod_all])
+fish_knl=(larr+0.5)[:,None]*((c_p_fid-1.)/c_p_fid)**2
+
+e_nt=ndens/np.sqrt(np.sum(ndens**2))
+c_nt=np.array([np.dot(e_nt,np.dot(c_ij_fid[l,:,:],e_nt)) for l in np.arange(LMAX+1)])
+s_nt=np.array([np.dot(e_nt,np.dot(c_ij_fid[l,:,:]-n_ij_fid[l,:,:],e_nt)) for l in np.arange(LMAX+1)])
+fish_nt=(larr+0.5)*(s_nt/c_nt)**2
+
+e_sg=e_o[1000,:,0]*ndens/np.sqrt(np.sum((e_o[1000,:,0]*ndens)**2))
+c_sg=np.array([np.dot(e_sg,np.dot(c_ij_fid[l,:,:],e_sg)) for l in np.arange(LMAX+1)])
+s_sg=np.array([np.dot(e_sg,np.dot(c_ij_fid[l,:,:]-n_ij_fid[l,:,:],e_sg)) for l in np.arange(LMAX+1)])
+fish_sg=(larr+0.5)*(s_sg/c_sg)**2
+
+snall=(np.sum(fish_all))
+print "%.5lE"%((np.sum(fish_all))/snall)
+for i in np.arange(nbins) :
+    print "%.5lE"%((np.sum(fish_knl[:,i]))/snall),i
+print "%.5lE"%((np.sum(fish_nt))/snall)
+print "%.5lE"%((np.sum(fish_sg))/snall)
+exit(1)
+print sigma,sigma_nt
+exit(1)
+
 
 #Plot power spectrum of K-L modes
 if plot_stuff :
@@ -190,15 +244,49 @@ fish_cum=np.cumsum(fish_permode)
 if plot_stuff :
     plt.figure();
     imodes=np.arange(nbins)+1
-    plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
-    plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,label='${\\rm Information\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
+    plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,
+             label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
+    plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,
+             label='${\\rm Information\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
     plt.legend(loc='upper right',frameon=False)
     plt.xlabel('${\\rm KL\\,\\,mode\\,\\,order}\\,\\,p_{\\rm KL}$',fontsize=18)
     plt.ylabel('${\\rm Relative\\,information\\,\\,content}$',fontsize=18)
-    plt.yscale('log')
+#    plt.yscale('log')
     plt.xlim([0.9,nbins+0.1])
-    plt.ylim([3E-7,1.2])
+#    plt.ylim([3E-7,1.2])
+    plt.ylim([-0.02,1.02])
     plt.savefig('../Draft/Figs/information_wl.pdf',bbox_inches='tight')
+
+
+
+if plot_stuff :
+    plt.figure()
+    ax=plt.gca()
+    zbarr=0.5*(z0bins+zfbins)
+    ax.plot([0.5,2.3],[0,0],'k--')
+    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.35,-0.30],interpolation='bicubic',cmap=cm.winter,aspect='auto')
+    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.42,-0.37],interpolation='bicubic',cmap=cm.autumn,aspect='auto')
+    plt.text(1.345,-0.335,'$1^{\\rm st}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
+    plt.text(1.33 ,-0.41 ,'$2^{\\rm nd}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
+    for i in (1+np.arange(199))*10 :
+#        ax.plot(zbarr,e_o[  i,:,0]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens)),'o-',
+#                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
+        ax.plot(zbarr,e_o[  i,:,0]*ndens/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens**2)),'o-',
+                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
+        if e_o[i,2,1]>0 :
+            sign=-1
+        else :
+            sign=1
+#        ax.plot(zbarr,sign*e_o[  i,:,1]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens)),'o-',
+#                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
+        ax.plot(zbarr,sign*e_o[  i,:,1]*ndens/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens**2)),'o-',
+                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
+    ax.plot(zbarr,e_nt/np.sqrt(np.sum(e_nt**2)),'k-',lw=2)
+    plt.xlabel('$z_\\alpha$',fontsize=18)
+    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf F}_\\ell)^p_\\alpha$',fontsize=18)
+    plt.xlim([0.5,2.3])
+#    plt.savefig('../Draft/Figs/kl_modes_wl.pdf',bbox_inches='tight')
+
     
 if plot_stuff :
     plt.show()
