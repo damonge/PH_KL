@@ -19,7 +19,7 @@ dpar=0.05
 sigma_gamma=0.28
 zedge_lo=0.5
 zedge_hi=2.5
-prefix="wll"
+prefix="wol"
 nzfile='nz_blue.txt'
 
 def sz_red(z) :
@@ -83,7 +83,7 @@ if plot_stuff:
     plt.savefig('../Draft/Figs/nz_lsst_wl.pdf',bbox_inches='tight')
 
 #Compute power spectra
-c_ij_fid,c_ij_mfn,c_ij_pfn=cgf.run_gofish(run_name,LMAX,parname,par0,dpar,tracertype,llim=2000)
+c_ij_fid,c_ij_mfn,c_ij_pfn=cgf.run_gofish(run_name,LMAX,parname,par0,dpar,tracertype,llim=-1)
 n_ij_fid=np.zeros_like(c_ij_fid)
 for i1 in np.arange(nbins) :
     n_ij_fid[:,i1,i1]=sigma_gamma**2*(np.pi/180./60.)**2/ndens[i1]
