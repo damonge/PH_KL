@@ -151,11 +151,14 @@ def read_cls_class(fname) :
 
     return dic
 
-def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False) :
-    if trtype=='gal_clustering' :
-        l_limber=lmx+1
+def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False,llim=None) :
+    if llim==None :
+        if trtype=='gal_clustering' :
+            l_limber=lmx+1
+        else :
+            l_limber=100
     else :
-        l_limber=100
+        l_limber=llim
 
     print "WOO"
     stout=""
