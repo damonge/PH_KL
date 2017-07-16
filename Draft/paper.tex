@@ -14,6 +14,16 @@
 \usepackage{lipsum}
 \newcommand{\nv}{\hat{\bf n}}
 \newcommand{\kalo}{Karhunen-Lo\`{e}ve}
+\newcommand{\jcap}{JCAP}
+\newcommand{\mnras}{MNRAS}
+\newcommand{\aap}{A\&A}
+\newcommand{\aaps}{A\&AS}
+\newcommand{\apjs}{ApJS}
+\newcommand{\apjl}{ApJL}
+\newcommand{\aj}{Astron. Journal}
+\newcommand{\pasp}{Publications of the ASP}
+\newcommand{\nar}{New Astronomy Review}
+\newcommand{\procspie}{Proceedings of the SPIE}
 
 \begin{document}
 \title{Science-driven 3D data compression}
@@ -31,7 +41,7 @@
 
 \section{Method}\label{sec:method}
   \subsection{The Karhunen-Loeve transform}\label{ssec:method.klbasis}
-    The idea behind the \kalo transform, as developed within the field of cosmological data analysis in e.g. CITES, is to compress a given data vector into a small set of modes containing most of the useful information on a particular parameter (or set of parameters). Let ${\bf a}$ be a data vector of dimension $N_s$, and let $\theta$ be a particular parameter we want to measure. Under the assumption that ${\bf x}$ is Gaussianly distributed with mean 0 and covariance ${\sf C}$, a set of linear combinations $y_p\equiv{\bf e}_p^\dag\,{\bf x}$ can be found such that the $y_p$ are white and uncorrelated ($\langle y_py_q^*\rangle=\delta_{pq}$) and such that the first $m<N_s$ combinations contain most of the information about $\theta$. This is done by solving the generalized eigenvalue problem CITE:
+    The idea behind the \kalo transform, as developed within the field of cosmological data analysis in e.g. \cite{1996ApJ...465...34V,1997ApJ...480...22T}, is to compress a given data vector into a small set of modes containing most of the useful information on a particular parameter (or set of parameters). Let ${\bf a}$ be a data vector of dimension $N_s$, and let $\theta$ be a particular parameter we want to measure. Under the assumption that ${\bf x}$ is Gaussianly distributed with mean 0 and covariance ${\sf C}$, a set of linear combinations $y_p\equiv{\bf e}_p^\dag\,{\bf x}$ can be found such that the $y_p$ are white and uncorrelated ($\langle y_py_q^*\rangle=\delta_{pq}$) and such that the first $m<N_s$ combinations contain most of the information about $\theta$. This is done by solving the generalized eigenvalue problem \cite{1997ApJ...480...22T}:
     \begin{equation}\label{eq:kl_general}
       \partial_\theta{\sf C}\,{\bf e}_p=\lambda_p\,{\sf C}\,{\bf e}_p,
     \end{equation}
@@ -40,7 +50,7 @@
     \subsubsection{The K-L transform for the signal-to-noise}\label{sssec:method.klbasis.sn}
       Let us decompose the data vector ${\bf x}$ into uncorrelated signal and noise components ${\bf x}={\bf s}+{\bf n}$ where, in this context, the signal is the part of the data containing any information of cosmological interest, and the noise is any contaminant preventing us from accessing it. In this particular case, the data covariance matrix can be split into their independent contributions ${\sf X}={\sf S}+{\sf N}$.
       
-      The K-L transform has traditionally been used to design an eigenbasis that maximizes the overall signal-to-noise ratio (e.g. CITES). This can be done by defining a fictitious parameter $\alpha$ multiplying the signal part of the data with fiducial value $\alpha=1$ (i.e. ${\bf x}=\alpha{\bf s}+{\bf n}$). In this case, after some trivial manipulations, the eigenvalue equation (Eq. \ref{eq:kl_general}) takes the form:
+      The K-L transform has traditionally been used to design an eigenbasis that maximizes the overall signal-to-noise ratio (e.g \cite{1995PhRvL..74.4369B,1996ApJ...465...34V}). This can be done by defining a fictitious parameter $\alpha$ multiplying the signal part of the data with fiducial value $\alpha=1$ (i.e. ${\bf x}=\alpha{\bf s}+{\bf n}$). In this case, after some trivial manipulations, the eigenvalue equation (Eq. \ref{eq:kl_general}) takes the form:
       \begin{equation}\label{eq:kl_sn}
         ({\sf S}+{\sf N}){\bf e}_p=\lambda_p{\sf N}{\bf e}_p,
       \end{equation}
@@ -82,7 +92,9 @@
       Since the second equation implies ${\sf C}{\sf E}\equiv({\sf E}^\dag)^{-1}$, the original vector ${\bf x}$ can be recovered from the coefficients ${\bf y}\equiv(y_1,...,y_{N_s})$ as ${\bf x}={\sf C}\,{\sf E}\,{\bf y}$. More interestingly, one can identify the principal eigenvectors of the Eq. \ref{eq:kl_sn_corr} (e.g. those with associated eigenvalues $\lambda_p$ above a given threshold $\lambda_{\rm thr}$) and project out the remaining modes, which are presumably more contaminated by ${\bf m}$. This procedure defines a filter ${\sf W}\equiv{\sf C}\,{\sf E}\,{\sf P}\,{\sf E}^\dag$, where ${\sf P}$ is a projection matrix with $1$s in the diagonal elements corresponding to the principal eigenmodes and zeros everywhere else. The filtered data vector is therefore $\tilde{\bf x}={\sf W}{\bf x}$.
 
   \subsection{Application to tomographic datasets}\label{ssec:method.tomographic}
-    The standard method to draw cosmological constraints from photometric redshift surveys is to divide the galaxy sample into bins in photo-$z$ space and use the information encoded in all the relevant auto- and cross-correlations between different bins, making use of various calibration methods in order to estimate the true redshift distribution of each bin. Several criteria can be followed in order to select these redshift bins, such as minimising the correlation between non-neighbouring bins or preserving a roughly constant number density on all bins. Other approaches (CITES) involve projecting the main observable (e.g. galaxy overdensity or shear) onto the Fourier-Bessel eigenbasis. None of these schemes are manifestly optimal from the point of view of $S/N$, final cosmological constraints or contaminant deprojection, however. This section presents an alternative slicing scheme addressing these shortcomings, based on the K-L transform.
+    The standard method to draw cosmological constraints from photometric redshift surveys is to divide the galaxy sample into bins in photo-$z$ space and use the information encoded in all the relevant auto- and cross-correlations between different bins CITES, making use of various calibration methods in order to estimate the true redshift distribution of each bin. Several criteria can be followed in order to select these redshift bins, such as minimising the correlation between non-neighbouring bins or preserving a roughly constant number density on all bins. Other approaches
+    (\cite{2003MNRAS.343.1327H,2007MNRAS.376..771K,2014MNRAS.442.1326K})
+    involve projecting the main observable (e.g. galaxy overdensity or shear) onto the Fourier-Bessel eigenbasis. None of these schemes are manifestly optimal from the point of view of $S/N$, final cosmological constraints or contaminant deprojection, however. This section presents an alternative slicing scheme addressing these shortcomings, based on the K-L transform.
     
     \subsubsection{Tomographic analyses}\label{sssec:method.tomographic.st}
       Let us start by assuming that we have split the galaxy sample into $N_s$ subsamples. As mentioned above, we will think of each of these subamples as some kind of redshift binning (e.g. binning galaxies in terms of their maximum-likelihood redshift), but the formalism applies to any set of subsamples. Let $a^\alpha(\nv)$ be the a field on the sphere at the angular position $\nv$ and defined in terms of the properties of the sources in the $\alpha$-th sample (e.g. the cosmic shear field $\gamma^\alpha$ or the galaxy overdensity $\delta^\alpha$), and let $\phi^\alpha(z)$ be the redshift distribution of these sources. Finally, let $a^\alpha_{\ell m}$ be the spherical harmonic coefficients of $a^\alpha$\footnote{Spin-2 fields, such as the cosmic shear, will be decomposed in spin-2 spherical harmonics, however the discussion below holds for fields of arbitrary spin.}. The power spectrum for our set of subsamples is defined as the two-point correlator of $a^\alpha_{\ell m}$:
@@ -159,8 +171,8 @@
     \end{align}
     \end{widetext}
    
-    This choice of basis defines the so-called harmonic-Bessel (or Fourier-Bessel) decomposition, and has been postulated as a possible data-compression method for the analysis of photometric redshift data (CITES here). In any realistic scenario -- e.g. in the presence of redshift uncertainties, redshift-space distortions or in the analysis of weak lensing data -- this basis is non-optimal, since different $k$-modes will be correlated, as opposed to the K-L basis described above.
-    
+    This choice of basis defines the so-called harmonic-Bessel (or Fourier-Bessel) decomposition, and has been postulated as a possible data-compression method for the analysis of photometric redshift data (e.g. \cite{2014MNRAS.442.1326K}). In any realistic scenario -- e.g. in the presence of redshift uncertainties, redshift-space distortions or in the analysis of weak lensing data -- this basis is non-optimal, since different $k$-modes will be correlated, as opposed to the K-L basis described above.
+
     TODO: SOMETHING ABOUT FREDHOLM EQUATIONS?
 
   \subsection{Weak lensing - K-L basis for dark energy}\label{ssec:results.wl}
@@ -169,13 +181,13 @@
       \includegraphics[width=0.49\textwidth]{Figs/d_p_wl}
       \caption{Power spectra of the K-L eigenmodes for the strawman weak lensing survey. All but the first three modes are noise-dominated, and most of the information is encoded in the first mode.}\label{fig:dp_wl}
     \end{figure}
-    \begin{figure}
+    \begin{figure*}
       \centering
       \includegraphics[width=0.49\textwidth]{Figs/kl_modes_wl}
       \includegraphics[width=0.49\textwidth]{Figs/information_wl}
       \caption{{\sl Left}: the first (blue-cyan) and second (red-yellow) eigenmodes of the strawman weak-lensing survey for different $\ell$. The redshift dependence of the modes stays roughly constant across $\ell$ and converges to a fixed shape for large $\ell$. {\sl Right}: information content of the different eigenmodes. Most of the information $\sim95\%$ is encoded in the first bin, and more than $99\%$ of it can be recovered considering only the first 2 modes.}\label{fig:kl_wl}
-    \end{figure}
-    To quantify the performance of the K-L modes for weak lensing we study the case of an LSST-like survey. The survey specifications and the characteristics of the galaxy sample are described in detail in CITE. In summary, we assume a sample with $\sim29$ objects per ${\rm arcmin}^2$ with the redshift distribution shown in the left panel of Figure \ref{fig:nz_wl}. We also approximate the photo-$z$ distribution as Gaussian with a scatter $\sigma_z=0.05\,(1+z)$.    
+    \end{figure*}
+    To quantify the performance of the K-L modes for weak lensing we study the case of an LSST-like survey. The survey specifications and the characteristics of the galaxy sample are described in detail in \cite{2015ApJ...814..145A}. In summary, we assume a sample with $\sim29$ objects per ${\rm arcmin}^2$ with the redshift distribution shown in the left panel of Figure \ref{fig:nz_wl}. We also approximate the photo-$z$ distribution as Gaussian with a scatter $\sigma_z=0.05\,(1+z)$.    
     
     The signal part of the cross-power spectrum between the cosmic shear measurements made in two different redshift shells is given by:
     \begin{equation}\label{eq:cl_generic}
@@ -192,33 +204,33 @@
     \end{equation}
     with $\bar{n}^\alpha$ in units of ${\rm srad}^{-1}$. We use $\sigma_\gamma=0.28$.
     
-    As our initial set of narrow redshift slices, we select top-hat bins in photo-$z$ space for $z_{\rm ph}>0.5$ with a width given by the value of $\sigma_z$ at the center of the bin. The resulting set of 16 bins is shown in the left panel of Figure \ref{fig:nz_wl}. The large overlap between bins implies that a choice of thinner slices is unlikely to unveil significantly more information, and we have verified that the results shown below do not change after doubling the number of bins. The lensing auto-power spectra (both signal and noise) for these bins are shown in the right panel of Figure \ref{fig:kl_wl}. The elements of $C^{\alpha\beta}_\ell$ were estimated using a modified version of the code presented in CITE.
-    
-    We compute the K-L modes for this setup and rank them according to their information content on the dark energy equation of state $w$. The power spectra of the resulting set of modes are shown in the left panel of Figure \ref{fig:dp_wl}. Comparing against the right panel of Fig. \ref{fig:nz_wl} we can see that the K-L decomposition effectively separates the signal-dominated and noise-dominated modes, with all modes $p>3$ dominated by noise (as we mentioned in Section \ref{sssec:method.klbasis.sn}, the noise power spectrum gets mapped into $1$ under the K-L transform). The fractional contribution of each mode to the total constraint on $w$ (i.e. its contribution to the corresponding Fisher matrix element) is shown in the left panel of Figure \ref{fig:kl_wl}. Most of the information ($\sim95\%$) is contained within a single mode, and the first two modes are able to recover more than $99\%$ of the total. The eigenvectors corresponding to the first and second modes for different values of $\ell$ are shown in the right panel of the same figure. Firstly, we observe that the eigenvectors preserve roughly the same shape for all $\ell$, and converge to the same shape at large $\ell$. The first eigenvector upweights the parts of the redshift range with the highest signal-to-noise, penalising the low-$z$ regime due to its poor lensing signal and the high-$z$ bins due to their high shot noise. The second eigenmode then recovers part of this information by marginally upweighting these regions.
-    
-    Since the cosmological lensing signal at a given redshift $z$ is caused by matter distribution at all redshifts $<z$, different redshift bins are tightly correlated at the signal level. This is the main reason for the large degree of data compression achievable in this case, a  statement that is in principle largely independent of the properties of the photometric redshifts. Exploiting this property could therefore significantly simplify the analysis of weak lensing datasets.
-
-  \subsection{Galaxy clustering - measuring $f_{\rm NL}$}\label{ssec:results.fnl}
+    As our initial set of narrow redshift slices, we select top-hat bins in photo-$z$ space for $z_{\rm ph}>0.5$ with a width given by the value of $\sigma_z$ at the center of the bin. The resulting set of 16 bins is shown in the left panel of Figure \ref{fig:nz_wl}. The large overlap between bins implies that a choice of thinner slices is unlikely to unveil significantly more information, and we have verified that the results shown below do not change after doubling the number of bins. The lensing auto-power spectra (both signal and noise) for these bins are shown in the right panel of Figure \ref{fig:kl_wl}. The elements of $C^{\alpha\beta}_\ell$ were estimated using a modified version of the code presented in \cite{2013JCAP...11..044D}.
     \begin{figure*}
       \centering
       \includegraphics[width=0.49\textwidth]{Figs/nz_lsst_gc}
       \includegraphics[width=0.49\textwidth]{Figs/c_ij_gc}
       \caption{{\sl Left}: redshift distribution and bins considered for the K-L analysis of a strawman large-scale-structure survey targeting a sample of red galaxies. {\sl Right}: clustering auto-power spectra of the redshift bins shown in the left panel. The signal and noise power spectra are shown as thick solid and thin dashed lines respectively.}\label{fig:nz_gc}
     \end{figure*}
+    
+    We compute the K-L modes for this setup and rank them according to their information content on the dark energy equation of state $w$. The power spectra of the resulting set of modes are shown in the left panel of Figure \ref{fig:dp_wl}. Comparing against the right panel of Fig. \ref{fig:nz_wl} we can see that the K-L decomposition effectively separates the signal-dominated and noise-dominated modes, with all modes $p>3$ dominated by noise (as we mentioned in Section \ref{sssec:method.klbasis.sn}, the noise power spectrum gets mapped into $1$ under the K-L transform). The fractional contribution of each mode to the total constraint on $w$ (i.e. its contribution to the corresponding Fisher matrix element) is shown in the left panel of Figure \ref{fig:kl_wl}. Most of the information ($\sim95\%$) is contained within a single mode, and the first two modes are able to recover more than $99\%$ of the total. The eigenvectors corresponding to the first and second modes for different values of $\ell$ are shown in the right panel of the same figure. Firstly, we observe that the eigenvectors preserve roughly the same shape for all $\ell$, and converge to the same shape at large $\ell$. The first eigenvector upweights the parts of the redshift range with the highest signal-to-noise, penalising the low-$z$ regime due to its poor lensing signal and the high-$z$ bins due to their high shot noise. The second eigenmode then recovers part of this information by marginally upweighting these regions.
+    
+    Since the cosmological lensing signal at a given redshift $z$ is caused by matter distribution at all redshifts $<z$, different redshift bins are tightly correlated at the signal level. This is the main reason for the large degree of data compression achievable in this case, a  statement that is in principle largely independent of the properties of the photometric redshifts. Exploiting this property could therefore significantly simplify the analysis of weak lensing datasets.
+
+  \subsection{Galaxy clustering - measuring $f_{\rm NL}$}\label{ssec:results.fnl}
     \begin{figure}
       \centering
       \includegraphics[width=0.49\textwidth]{Figs/d_p_gc}
       \caption{Power spectra of the K-L eigenmodes for the strawman weak large-scale-structure survey. Unlike in the case of weak lensing, a large number of eigenmodes are signal-dominated. This is due to the overall higher signal-to-noise ratio of galaxy clustering with respect to galaxy shear as well as to the smaller correlations between distant bins.}\label{fig:dp_gc}
     \end{figure}
-    \begin{figure*}
+    \begin{figure}
       \centering
       \includegraphics[width=0.49\textwidth]{Figs/information_gc}
       \includegraphics[width=0.49\textwidth]{Figs/kl_modes_gc}
       \caption{{\sl Left}: information content of the different K-L eigenmodes for the strawman galaxy clustering survey. The bulk of the information ($>90\%$) on $f_{\rm NL}$ is encoded in the first 12 modes. {\sl Left}: the first 5 K-L modes for $\ell=30$. The sinusoidal shape of the modes agrees with the expectation that, in the limit of $\sigma_z\rightarrow0$ and no background redshift dependence, the K-L modes should be given by the spherical Bessel functions. }\label{fig:kl_gc}
-    \end{figure*}
-    It is expected that future large-scale photometric surveys will make the search for primordial non-Gaussianity one of their main science cases. This can be achieved throught the excess power a non-zero value of $f_{\rm NL}$ generates in the two-point statistics of biased tracers of the matter distribution on large scales CITES. Since the signal is most relevant on large scales, one can expect most of the information on $f_{\rm NL}$ to be concentrated in a small number of large-scale radial modes, which makes the K-L decomposition described above an ideal analysis method.
+    \end{figure}
+    It is expected that future large-scale photometric surveys will make the search for primordial non-Gaussianity one of their main science cases. This can be achieved throught the excess power a non-zero value of $f_{\rm NL}$ generates in the two-point statistics of biased tracers of the matter distribution on large scales \cite{2000ApJ...541...10M,2008PhRvD..77l3514D}. Since the signal is most relevant on large scales, one can expect most of the information on $f_{\rm NL}$ to be concentrated in a small number of large-scale radial modes, which makes the K-L decomposition described above an ideal analysis method.
     
-    To explore this possibility we have considered a strawman photometric survey targeting a sample of red galaxies, characterized by their higher bias and better photo-$z$ uncertainties than their blue counterparts. The sample we consider is compatible with what could be observed by LSST, characterized by the redshift distribution shown in the left panel of Fig. \ref{fig:nz_gc} (full details can be found in CITE). We assume a photo-$z$ uncertainty of $\sigma_z=0.02\,(1+z)$ and split the sample into redshift bins in photo-$z$ space with $z_{\rm ph}>0.5$ and a width given by the photo-$z$ uncertainty at the bin centre. The resulting set of 23 bins is shown in the left panel of Fig. \ref{fig:nz_gc}. In the case of galaxy clustering, the transfer functions entering the signal power spectrum (see Eq. \ref{eq:cl_generic}) are given by:
+    To explore this possibility we have considered a strawman photometric survey targeting a sample of red galaxies, characterized by their higher bias and better photo-$z$ uncertainties than their blue counterparts. The sample we consider is compatible with what could be observed by LSST, characterized by the redshift distribution shown in the left panel of Fig. \ref{fig:nz_gc} (full details can be found in \cite{2015ApJ...814..145A}). We assume a photo-$z$ uncertainty of $\sigma_z=0.02\,(1+z)$ and split the sample into redshift bins in photo-$z$ space with $z_{\rm ph}>0.5$ and a width given by the photo-$z$ uncertainty at the bin centre. The resulting set of 23 bins is shown in the left panel of Fig. \ref{fig:nz_gc}. In the case of galaxy clustering, the transfer functions entering the signal power spectrum (see Eq. \ref{eq:cl_generic}) are given by:
 %    \begin{widetext}
     \begin{align}\nonumber
       &\Delta^{\delta,\alpha}_\ell(k)\equiv\int dz\,\phi^\alpha(z)\,\Psi_\ell(k,z)\,\sqrt{P(k,z)},\\\label{eq:tgc_dr}
@@ -230,6 +242,17 @@
     Using the prescription described in Section \ref{ssec:method.klbasis}, we find the K-L eigenmodes and associated power spectra, and rank them according to their contribution to the total Fisher matrix element of $f_{\rm NL}$. The power spectra of the K-L modes are shown in Figure \ref{fig:dp_gc}. Unlike the case of weak lensing, the information encoded in the galaxy overdensity is local in redshift (as opposed to integrated). Thus the correlation between different bins decays rapidly with redshift separation, and we find a much larger number of signal-dominated modes (e.g. compare with the analogous figure for weak lensing, Fig. \ref{fig:dp_wl}). The information on $f_{\rm NL}$ contained in each mode is shown in the left panel of Fig. \ref{fig:kl_gc}. In this case, the information is evenly spread across the first $\sim10$ modes, and 90\% of the total constraining power can be achieved by considering the first 12 eigenvectors. The form of the first 5 of these eigenvectors for $\ell=30$ are shown in the right panel of Fig. \ref{fig:kl_gc}. The eigenmodes are sinusoids with varying frequencies, in agreement with the expectation that, in the limit of $\sigma_z\rightarrow0$ and no background redshift dependence, the K-L decomposition is achieved by the spherical Bessel functions (see Section \ref{ssec:results.bessel}). A Fourier-Bessel decomposition is therefore probably a near-optimal analysis method, although the K-L decomposition allows a more precise determination of the truly orthogonal radial modes.
     
   \subsection{Galaxy clustering - magnification bias}\label{ssec:results.mag}  
+    \begin{figure*}
+      \centering
+      \includegraphics[width=0.49\textwidth]{Figs/r_ij_mb_wom}
+      \includegraphics[width=0.49\textwidth]{Figs/r_ij_mb_wm}
+      \caption{{\sl Left}: information content of the different K-L eigenmodes for the strawman galaxy clustering survey. The bulk of the information ($>90\%$) on $f_{\rm NL}$ is encoded in the first 12 modes. {\sl Left}: the first 5 K-L modes for $\ell=30$. The sinusoidal shape of the modes agrees with the expectation that, in the limit of $\sigma_z\rightarrow0$ and no background redshift dependence, the K-L modes should be given by the spherical Bessel functions. }\label{fig:r_ij_wm}
+    \end{figure*}
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.49\textwidth]{Figs/information_mb}
+      \caption{{\sl Left}: information content of the different K-L eigenmodes for the strawman galaxy clustering survey. The bulk of the information ($>90\%$) on $f_{\rm NL}$ is encoded in the first 12 modes. {\sl Left}: the first 5 K-L modes for $\ell=30$. The sinusoidal shape of the modes agrees with the expectation that, in the limit of $\sigma_z\rightarrow0$ and no background redshift dependence, the K-L modes should be given by the spherical Bessel functions. }\label{fig:kl_mb}
+    \end{figure}
 %  \subsection{Correlated contaminants} \label{ssec:results.cc}
 %    \subsubsection{Intrinsic alignments} \label{sssec:results.cc.ia}
 %      Contamination of the weak lensing signal by locally correlated galaxy shapes, commonly known as ``intrinsic alignments'' (IA), is one of the main concerns for shear surveys. This contaminant cannot be described as an uncorrelated source of irreducible noise, since the causes of IA (e.g. the local tidal field in the non-linear alignment model CITE) are likely correlated the lensing potential.
@@ -240,15 +263,15 @@
       &\Delta^{M,\alpha}_\ell(k)=-2\ell(\ell+1)\int\,d\chi W^{M,\alpha}(\chi)\frac{j_\ell(k\chi)}{k^2a(\chi)}\sqrt{P(k,z(\chi))},\\
       &W^{M,\alpha}(\chi)=\frac{3H_0^2\Omega_M}{2}\int_{z(\chi)}^\infty dz'\,\phi^\alpha(z')\frac{2-5\,s}{2}\,\frac{\chi(z')-\chi}{\chi(z')\chi},
     \end{align}
-    where $s$ is the tilt in the number counts of sources as a function of magnitude limit. This effect, commonly labeled ``magnification bias'' CITES, can be used as an alternative measurement of gravitational lensing, through galaxy positions instead of shapes. The contribution of the magnification term is, however, weak in comparison with the density and RSD terms (Eq. \ref{eq:tgc_dr}) it sits on top of, and therefore its measurement can be hampered by the cosmic variance contribution of these terms.
+    where $s$ is the tilt in the number counts of sources as a function of magnitude limit. This effect, commonly labeled ``magnification bias'' \cite{1967ApJ...147...61G,2000ApJ...537L..77M,2008PhRvD..77b3512L}, can be used as an alternative measurement of gravitational lensing, through galaxy positions instead of shapes. The contribution of the magnification term is, however, weak in comparison with the density and RSD terms (Eq. \ref{eq:tgc_dr}) it sits on top of, and therefore its measurement can be hampered by the cosmic variance contribution of these terms.
     
     One can therefore think of the density and RSD terms as correlated contaminants of the magnification signal, and use the K-L formalism described in Section \ref{sssec:method.klbasis.cr} to devise an optimal basis of radial eigenmodes containing the bulk of its signal-to-noise.
     
-    To test this approach we consider an LSST-like survey targeting the same sample of galaxies used in Section \ref{ssec:results.wl}, split into 16 photometric redshift bins for $z_{\rm ph}>0.5$. Figure REF shows the correlation coefficients, defined as $R^{\alpha\beta}_\ell=C^{\alpha\beta}_\ell/\sqrt{C^{\alpha\alpha}_\ell C^{\beta\beta}_\ell}$, at $\ell=400$, with (left panel) and without (right panel) the magnification bias effect. The Figure emphasizes that, as in the case of cosmic shear, the lensing magnification term is correlated over widely separated redshifts, and therefore it should be possible to find a small number of optimal eigenmodes as was done in Section \ref{ssec:results.wl} for weak lensing.
+    To test this approach we consider an LSST-like survey targeting the same sample of galaxies used in Section \ref{ssec:results.wl}, split into 16 photometric redshift bins for $z_{\rm ph}>0.5$. Figure \ref{fig:r_ij_wm} shows the correlation coefficients, defined as $R^{\alpha\beta}_\ell=C^{\alpha\beta}_\ell/\sqrt{C^{\alpha\alpha}_\ell C^{\beta\beta}_\ell}$, at $\ell=400$, with (left panel) and without (right panel) the magnification bias effect. The Figure emphasizes that, as in the case of cosmic shear, the lensing magnification term is correlated over widely separated redshifts, and therefore it should be possible to find a small number of optimal eigenmodes as was done in Section \ref{ssec:results.wl} for weak lensing.
     
-    We do so following the prescription outlined in Section \ref{sssec:method.klbasis.cr} for correlated contaminants. The contribution of each eigenmode to the Fisher matrix element corresponding to the magnification bias amplitude, i.e. the contribution to the total magnification $S/N$, is shown in Figure REF. As expected, most of the signal ($>80\%$) is contained in the first eigenmode, with more than $95\%$ of the total concentrated in the first two.
+    We do so following the prescription outlined in Section \ref{sssec:method.klbasis.cr} for correlated contaminants. The contribution of each eigenmode to the Fisher matrix element corresponding to the magnification bias amplitude, i.e. the contribution to the total magnification $S/N$, is shown in Figure \ref{fig:kl_mb}. As expected, most of the signal ($>80\%$) is contained in the first eigenmode, with more than $95\%$ of the total concentrated in the first two.
     
-    We finish by noting that this approach is similar to the ``nulling'' method of CITE, and that a similar treatment could be carried out on the cosmic shear field to separate the lensing contribution from that coming from intrinsic alignment CITES.
+    We finish by noting that this approach is similar to the ``nulling'' method of \cite{2011MNRAS.415.1681H}, and that a similar treatment could be carried out on the cosmic shear field to separate the lensing contribution from that coming from intrinsic alignment \cite{2008A&A...488..829J}.
 
     
 \section{Practical example: weak lensing}
@@ -297,5 +320,7 @@
     =M_{\ell\ell'}\left[({\sf E}_\ell)^p_\alpha({\sf N}^{-1}_\ell)_{\alpha\beta}({\sf E}_{\ell'})^{p'}_\beta\right]^2
   \end{equation}
   where the second equality holds only if all the maps $a^\alpha_\ell$ share the same mask $w$.\footnote{Note that, for full-sky coverage $M_{\ell\ell'}=\delta_{\ell\ell'}$ and using the orthonormality of ${\sf E}$ we get $M^{pp'}_{\ell\ell'}=\delta_{\ell\ell'}\delta_{pp'}$.}
+  
+  \cite{2013arXiv1307.1307M,2015PhRvD..92l3010L}
 
 \end{document}

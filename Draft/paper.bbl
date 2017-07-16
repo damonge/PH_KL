@@ -6,7 +6,7 @@
 %Control: page (0) single
 %Control: year (1) truncated
 %Control: production of eprint (0) enabled
-\begin{thebibliography}{0}%
+\begin{thebibliography}{17}%
 \makeatletter
 \providecommand \@ifxundefined [1]{%
  \@ifx{#1\undefined}
@@ -50,4 +50,210 @@
 \providecommand \BibitemShut  [1]{\csname bibitem#1\endcsname}%
 \let\auto@bib@innerbib\@empty
 %</preamble>
+\bibitem [{\citenamefont {{Vogeley}}\ and\ \citenamefont
+  {{Szalay}}(1996)}]{1996ApJ...465...34V}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.~S.}\ \bibnamefont
+  {{Vogeley}}}\ and\ \bibinfo {author} {\bibfnamefont {A.~S.}\ \bibnamefont
+  {{Szalay}}},\ }\href {\doibase 10.1086/177399} {\bibfield  {journal}
+  {\bibinfo  {journal} {\apj}\ }\textbf {\bibinfo {volume} {465}},\ \bibinfo
+  {pages} {34} (\bibinfo {year} {1996})},\ \Eprint
+  {http://arxiv.org/abs/astro-ph/9601185} {astro-ph/9601185} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{Tegmark}}\ \emph {et~al.}(1997)\citenamefont
+  {{Tegmark}}, \citenamefont {{Taylor}},\ and\ \citenamefont
+  {{Heavens}}}]{1997ApJ...480...22T}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {{Tegmark}}}, \bibinfo {author} {\bibfnamefont {A.~N.}\ \bibnamefont
+  {{Taylor}}}, \ and\ \bibinfo {author} {\bibfnamefont {A.~F.}\ \bibnamefont
+  {{Heavens}}},\ }\href {\doibase 10.1086/303939} {\bibfield  {journal}
+  {\bibinfo  {journal} {\apj}\ }\textbf {\bibinfo {volume} {480}},\ \bibinfo
+  {pages} {22} (\bibinfo {year} {1997})},\ \Eprint
+  {http://arxiv.org/abs/astro-ph/9603021} {astro-ph/9603021} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{Bond}}(1995)}]{1995PhRvL..74.4369B}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~R.}\ \bibnamefont
+  {{Bond}}},\ }\href {\doibase 10.1103/PhysRevLett.74.4369} {\bibfield
+  {journal} {\bibinfo  {journal} {Physical Review Letters}\ }\textbf {\bibinfo
+  {volume} {74}},\ \bibinfo {pages} {4369} (\bibinfo {year} {1995})},\ \Eprint
+  {http://arxiv.org/abs/astro-ph/9407044} {astro-ph/9407044} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{Heavens}}(2003)}]{2003MNRAS.343.1327H}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {{Heavens}}},\ }\href {\doibase 10.1046/j.1365-8711.2003.06780.x} {\bibfield
+  {journal} {\bibinfo  {journal} {\mnras}\ }\textbf {\bibinfo {volume} {343}},\
+  \bibinfo {pages} {1327} (\bibinfo {year} {2003})},\ \Eprint
+  {http://arxiv.org/abs/astro-ph/0304151} {astro-ph/0304151} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{Kitching}}\ \emph {et~al.}(2007)\citenamefont
+  {{Kitching}}, \citenamefont {{Heavens}}, \citenamefont {{Taylor}},
+  \citenamefont {{Brown}}, \citenamefont {{Meisenheimer}}, \citenamefont
+  {{Wolf}}, \citenamefont {{Gray}},\ and\ \citenamefont
+  {{Bacon}}}]{2007MNRAS.376..771K}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.~D.}\ \bibnamefont
+  {{Kitching}}}, \bibinfo {author} {\bibfnamefont {A.~F.}\ \bibnamefont
+  {{Heavens}}}, \bibinfo {author} {\bibfnamefont {A.~N.}\ \bibnamefont
+  {{Taylor}}}, \bibinfo {author} {\bibfnamefont {M.~L.}\ \bibnamefont
+  {{Brown}}}, \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont
+  {{Meisenheimer}}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont
+  {{Wolf}}}, \bibinfo {author} {\bibfnamefont {M.~E.}\ \bibnamefont {{Gray}}},
+  \ and\ \bibinfo {author} {\bibfnamefont {D.~J.}\ \bibnamefont {{Bacon}}},\
+  }\href {\doibase 10.1111/j.1365-2966.2007.11473.x} {\bibfield  {journal}
+  {\bibinfo  {journal} {\mnras}\ }\textbf {\bibinfo {volume} {376}},\ \bibinfo
+  {pages} {771} (\bibinfo {year} {2007})},\ \Eprint
+  {http://arxiv.org/abs/astro-ph/0610284} {astro-ph/0610284} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{Kitching}}\ \emph {et~al.}(2014)\citenamefont
+  {{Kitching}}, \citenamefont {{Heavens}}, \citenamefont {{Alsing}},
+  \citenamefont {{Erben}}, \citenamefont {{Heymans}}, \citenamefont
+  {{Hildebrandt}}, \citenamefont {{Hoekstra}}, \citenamefont {{Jaffe}},
+  \citenamefont {{Kiessling}}, \citenamefont {{Mellier}}, \citenamefont
+  {{Miller}}, \citenamefont {{van Waerbeke}}, \citenamefont {{Benjamin}},
+  \citenamefont {{Coupon}}, \citenamefont {{Fu}}, \citenamefont {{Hudson}},
+  \citenamefont {{Kilbinger}}, \citenamefont {{Kuijken}}, \citenamefont
+  {{Rowe}}, \citenamefont {{Schrabback}}, \citenamefont {{Semboloni}},\ and\
+  \citenamefont {{Velander}}}]{2014MNRAS.442.1326K}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.~D.}\ \bibnamefont
+  {{Kitching}}}, \bibinfo {author} {\bibfnamefont {A.~F.}\ \bibnamefont
+  {{Heavens}}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {{Alsing}}},
+  \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {{Erben}}}, \bibinfo
+  {author} {\bibfnamefont {C.}~\bibnamefont {{Heymans}}}, \bibinfo {author}
+  {\bibfnamefont {H.}~\bibnamefont {{Hildebrandt}}}, \bibinfo {author}
+  {\bibfnamefont {H.}~\bibnamefont {{Hoekstra}}}, \bibinfo {author}
+  {\bibfnamefont {A.}~\bibnamefont {{Jaffe}}}, \bibinfo {author} {\bibfnamefont
+  {A.}~\bibnamefont {{Kiessling}}}, \bibinfo {author} {\bibfnamefont
+  {Y.}~\bibnamefont {{Mellier}}}, \bibinfo {author} {\bibfnamefont
+  {L.}~\bibnamefont {{Miller}}}, \bibinfo {author} {\bibfnamefont
+  {L.}~\bibnamefont {{van Waerbeke}}}, \bibinfo {author} {\bibfnamefont
+  {J.}~\bibnamefont {{Benjamin}}}, \bibinfo {author} {\bibfnamefont
+  {J.}~\bibnamefont {{Coupon}}}, \bibinfo {author} {\bibfnamefont
+  {L.}~\bibnamefont {{Fu}}}, \bibinfo {author} {\bibfnamefont {M.~J.}\
+  \bibnamefont {{Hudson}}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {{Kilbinger}}}, \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont
+  {{Kuijken}}}, \bibinfo {author} {\bibfnamefont {B.~T.~P.}\ \bibnamefont
+  {{Rowe}}}, \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont
+  {{Schrabback}}}, \bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
+  {{Semboloni}}}, \ and\ \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {{Velander}}},\ }\href {\doibase 10.1093/mnras/stu934} {\bibfield  {journal}
+  {\bibinfo  {journal} {\mnras}\ }\textbf {\bibinfo {volume} {442}},\ \bibinfo
+  {pages} {1326} (\bibinfo {year} {2014})},\ \Eprint
+  {http://arxiv.org/abs/1401.6842} {arXiv:1401.6842} \BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Alonso}}\ \emph {et~al.}(2015)\citenamefont
+  {{Alonso}}, \citenamefont {{Bull}}, \citenamefont {{Ferreira}}, \citenamefont
+  {{Maartens}},\ and\ \citenamefont {{Santos}}}]{2015ApJ...814..145A}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {D.}~\bibnamefont
+  {{Alonso}}}, \bibinfo {author} {\bibfnamefont {P.}~\bibnamefont {{Bull}}},
+  \bibinfo {author} {\bibfnamefont {P.~G.}\ \bibnamefont {{Ferreira}}},
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {{Maartens}}}, \ and\
+  \bibinfo {author} {\bibfnamefont {M.~G.}\ \bibnamefont {{Santos}}},\ }\href
+  {\doibase 10.1088/0004-637X/814/2/145} {\bibfield  {journal} {\bibinfo
+  {journal} {\apj}\ }\textbf {\bibinfo {volume} {814}},\ \bibinfo {eid} {145}
+  (\bibinfo {year} {2015})},\ \Eprint {http://arxiv.org/abs/1505.07596}
+  {arXiv:1505.07596} \BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Di Dio}}\ \emph {et~al.}(2013)\citenamefont {{Di
+  Dio}}, \citenamefont {{Montanari}}, \citenamefont {{Lesgourgues}},\ and\
+  \citenamefont {{Durrer}}}]{2013JCAP...11..044D}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {E.}~\bibnamefont {{Di
+  Dio}}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {{Montanari}}},
+  \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {{Lesgourgues}}}, \ and\
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {{Durrer}}},\ }\href
+  {\doibase 10.1088/1475-7516/2013/11/044} {\bibfield  {journal} {\bibinfo
+  {journal} {\jcap}\ }\textbf {\bibinfo {volume} {11}},\ \bibinfo {eid} {044}
+  (\bibinfo {year} {2013})},\ \Eprint {http://arxiv.org/abs/1307.1459}
+  {arXiv:1307.1459} \BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Matarrese}}\ \emph {et~al.}(2000)\citenamefont
+  {{Matarrese}}, \citenamefont {{Verde}},\ and\ \citenamefont
+  {{Jimenez}}}]{2000ApJ...541...10M}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {{Matarrese}}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {{Verde}}}, \ and\ \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {{Jimenez}}},\ }\href {\doibase 10.1086/309412} {\bibfield  {journal}
+  {\bibinfo  {journal} {\apj}\ }\textbf {\bibinfo {volume} {541}},\ \bibinfo
+  {pages} {10} (\bibinfo {year} {2000})},\ \Eprint
+  {http://arxiv.org/abs/astro-ph/0001366} {astro-ph/0001366} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{Dalal}}\ \emph {et~al.}(2008)\citenamefont
+  {{Dalal}}, \citenamefont {{Dor{\'e}}}, \citenamefont {{Huterer}},\ and\
+  \citenamefont {{Shirokov}}}]{2008PhRvD..77l3514D}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.}~\bibnamefont
+  {{Dalal}}}, \bibinfo {author} {\bibfnamefont {O.}~\bibnamefont {{Dor{\'e}}}},
+  \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {{Huterer}}}, \ and\
+  \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {{Shirokov}}},\ }\href
+  {\doibase 10.1103/PhysRevD.77.123514} {\bibfield  {journal} {\bibinfo
+  {journal} {\prd}\ }\textbf {\bibinfo {volume} {77}},\ \bibinfo {eid} {123514}
+  (\bibinfo {year} {2008})},\ \Eprint {http://arxiv.org/abs/0710.4560}
+  {arXiv:0710.4560} \BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Gunn}}(1967)}]{1967ApJ...147...61G}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~E.}\ \bibnamefont
+  {{Gunn}}},\ }\href {\doibase 10.1086/148981} {\bibfield  {journal} {\bibinfo
+  {journal} {\apj}\ }\textbf {\bibinfo {volume} {147}},\ \bibinfo {pages} {61}
+  (\bibinfo {year} {1967})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Matsubara}}(2000)}]{2000ApJ...537L..77M}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.}~\bibnamefont
+  {{Matsubara}}},\ }\href {\doibase 10.1086/312762} {\bibfield  {journal}
+  {\bibinfo  {journal} {\apjl}\ }\textbf {\bibinfo {volume} {537}},\ \bibinfo
+  {pages} {L77} (\bibinfo {year} {2000})},\ \Eprint
+  {http://arxiv.org/abs/astro-ph/0004392} {astro-ph/0004392} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{Loverde}}\ \emph {et~al.}(2008)\citenamefont
+  {{Loverde}}, \citenamefont {{Hui}},\ and\ \citenamefont
+  {{Gazta{\~n}aga}}}]{2008PhRvD..77b3512L}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {{Loverde}}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {{Hui}}}, \
+  and\ \bibinfo {author} {\bibfnamefont {E.}~\bibnamefont {{Gazta{\~n}aga}}},\
+  }\href {\doibase 10.1103/PhysRevD.77.023512} {\bibfield  {journal} {\bibinfo
+  {journal} {\prd}\ }\textbf {\bibinfo {volume} {77}},\ \bibinfo {eid} {023512}
+  (\bibinfo {year} {2008})},\ \Eprint {http://arxiv.org/abs/0708.0031}
+  {arXiv:0708.0031} \BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Heavens}}\ and\ \citenamefont
+  {{Joachimi}}(2011)}]{2011MNRAS.415.1681H}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~F.}\ \bibnamefont
+  {{Heavens}}}\ and\ \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {{Joachimi}}},\ }\href {\doibase 10.1111/j.1365-2966.2011.18816.x} {\bibfield
+   {journal} {\bibinfo  {journal} {\mnras}\ }\textbf {\bibinfo {volume}
+  {415}},\ \bibinfo {pages} {1681} (\bibinfo {year} {2011})},\ \Eprint
+  {http://arxiv.org/abs/1101.3337} {arXiv:1101.3337} \BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Joachimi}}\ and\ \citenamefont
+  {{Schneider}}(2008)}]{2008A&A...488..829J}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {{Joachimi}}}\ and\ \bibinfo {author} {\bibfnamefont {P.}~\bibnamefont
+  {{Schneider}}},\ }\href {\doibase 10.1051/0004-6361:200809971} {\bibfield
+  {journal} {\bibinfo  {journal} {\aap}\ }\textbf {\bibinfo {volume} {488}},\
+  \bibinfo {pages} {829} (\bibinfo {year} {2008})},\ \Eprint
+  {http://arxiv.org/abs/0804.2292} {arXiv:0804.2292} \BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{McEwen}}\ and\ \citenamefont
+  {{Leistedt}}(2013)}]{2013arXiv1307.1307M}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~D.}\ \bibnamefont
+  {{McEwen}}}\ and\ \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {{Leistedt}}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {ArXiv e-prints}\ } (\bibinfo {year} {2013})},\ \Eprint
+  {http://arxiv.org/abs/1307.1307} {arXiv:1307.1307 [cs.IT]} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{Leistedt}}\ \emph {et~al.}(2015)\citenamefont
+  {{Leistedt}}, \citenamefont {{McEwen}}, \citenamefont {{Kitching}},\ and\
+  \citenamefont {{Peiris}}}]{2015PhRvD..92l3010L}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {{Leistedt}}}, \bibinfo {author} {\bibfnamefont {J.~D.}\ \bibnamefont
+  {{McEwen}}}, \bibinfo {author} {\bibfnamefont {T.~D.}\ \bibnamefont
+  {{Kitching}}}, \ and\ \bibinfo {author} {\bibfnamefont {H.~V.}\ \bibnamefont
+  {{Peiris}}},\ }\href {\doibase 10.1103/PhysRevD.92.123010} {\bibfield
+  {journal} {\bibinfo  {journal} {\prd}\ }\textbf {\bibinfo {volume} {92}},\
+  \bibinfo {eid} {123010} (\bibinfo {year} {2015})},\ \Eprint
+  {http://arxiv.org/abs/1509.06750} {arXiv:1509.06750} \BibitemShut {NoStop}%
 \end{thebibliography}%
