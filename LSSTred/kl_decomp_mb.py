@@ -6,6 +6,8 @@ from scipy.special import erf
 from scipy.integrate import quad
 import matplotlib.cm as cm
 import common_gofish as cgf
+from matplotlib.colors import LogNorm
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 plot_stuff=True
 SZ_RED=0.05
@@ -56,145 +58,135 @@ np.savetxt("outputs_gc_mb/sz.txt",np.transpose([zarr,szarr]))
 np.savetxt("outputs_gc_mb/nz.txt",np.transpose([zarr,nzarr]))
 
 #Selection function for individual bins
-z0bins,zfbins=get_edges(zedge_lo,zedge_hi,SZ_RED,nsamp)
-nbins=len(z0bins)
+z0bins,zfbins=get_edges(zedge_lo,zedge_hi,SZ_RED,nsamp); zbarr=0.5*(z0bins+zfbins); nbins=len(z0bins)
 nz_bins=np.array([nzarr*pdf_photo(zarr,z0,zf,sphz_red(0.5*(z0+zf))) for z0,zf in zip(z0bins,zfbins)])
+print np.shape(nz_bins),np.shape(zarr)
 ndens=np.array([np.sum(nz)*(zarr[1]-zarr[0]) for nz in nz_bins])
-np.savetxt("outputs_gc_mb/bins.txt",np.transpose([0.5*(z0bins+zfbins),0.5*(zfbins-z0bins),sphz_red(0.5*(z0bins+zfbins))]))
-print nbins
-exit(1)
-data_ll=cgf.read_cls_class("outputs_wl0_IA_sz0.05_ns1_lmx2000/run_lens_lenscl.dat")
-data_ii=cgf.read_cls_class("outputs_wl0_IA_sz0.05_ns1_lmx2000/run_ia_iacl.dat")
-data_li=cgf.read_cls_class("outputs_wl0_IA_sz0.05_ns1_lmx2000/run_lens_iacl.dat")
+np.savetxt("outputs_gc_mb/bins.txt",
+           np.transpose([0.5*(z0bins+zfbins),0.5*(zfbins-z0bins),sphz_red(0.5*(z0bins+zfbins))]))
 
-larr=np.arange(2001)[200:]
-cl_ll=data_ll['cl_ll'][200:,  :,  :]
-cl_ii=data_ii['cl_ll'][200:,  :,  :]
-cl_li=data_li['cl_ll'][200:,nbins:,:nbins]
-cl_il=data_li['cl_ll'][200:,:nbins,nbins:]
+ib_off=7
+if plot_stuff :
+    plt.figure();
+    for i in nbins-1-np.arange(nbins) :
+        if i>=ib_off :
+            nz=nz_bins[i]
+            ran=np.where(nz>1E-3*np.amax(nz))[0]
+            plt.plot(zarr[ran],nz[ran],color=cm.brg((nbins-ib_off-i+ib_off-0.5)/(nbins-ib_off+0.)),lw=2)
+    plt.plot(zarr,nzarr,'k-',lw=2)
+    plt.ylim([0,1.05*np.amax(nzarr)])
+    plt.xlim([0,1.2*zedge_hi])
+    plt.xlabel('$z$',fontsize=18)
+    plt.ylabel('$N(z)\\,\\,[{\\rm arcmin}^{-2}]$',fontsize=18)
+    plt.savefig('../Draft/Figs/nz_lsst_mb.pdf',bbox_inches='tight')
 
-c_ij_fid=(cl_ll+cl_li+cl_il+cl_ii)
-d_ij_fid=2*(cl_ll+0.5*(cl_li+cl_il))
+data_dd=cgf.read_cls_class("outputs_gc_mb/run_dens_denscl.dat")
+data_mm=cgf.read_cls_class("outputs_gc_mb/run_mb_mbcl.dat")
+data_dm=cgf.read_cls_class("outputs_gc_mb/run_dens_mbcl.dat")
+
+larr=np.arange(2001)[2:1001]
+cl_dd=data_dd['cl_dd'][2:1001,ib_off:,ib_off:]
+cl_mm=data_mm['cl_dd'][2:1001,ib_off:,ib_off:]
+cl_dm=data_dm['cl_dd'][2:1001,nbins+ib_off:,ib_off:nbins]
+cl_md=data_dm['cl_dd'][2:1001,ib_off:nbins,nbins+ib_off:]
+nbins-=ib_off
+
+c_ij_fid=(cl_dd+cl_dm+cl_md+cl_mm)
+d_ij_fid=2*(cl_mm+0.5*(cl_dm+cl_md))
 n_ij_fid=np.zeros_like(c_ij_fid)
 for i1 in np.arange(nbins) :
-    n_ij_fid[:,i1,i1]=sigma_gamma**2*(np.pi/180./60.)**2/ndens[i1]
-#c_ij_fid+=n_ij_fid
-#cl_ll+=n_ij_fid
-
-plt.figure()
-for i in np.arange(nbins)-1 :
-    plt.plot(larr,cl_ll[:,i+1,i]    ,'r-')
-    plt.plot(larr,c_ij_fid[:,i+1,i],'b-')
-plt.loglog()
-
-
+    n_ij_fid[:,i1,i1]=(np.pi/180./60.)**2/ndens[i1+ib_off]
+c_ij_fid+=n_ij_fid
 nell=len(c_ij_fid)
+
+if plot_stuff :
+    c_m=(c_ij_fid-n_ij_fid)[400,:,:]
+    c_d=cl_dd[400,:,:]
+    r_m=c_m/np.sqrt(np.diag(c_m)[:,None]*np.diag(c_m)[None,:])
+    r_d=c_d/np.sqrt(np.diag(c_d)[:,None]*np.diag(c_d)[None,:])
+
+    plt.figure(); ax=plt.gca();
+    ax.set_title('$R^{\\alpha,\\beta}_{\\ell=400},\\,\\,{\\rm w.\\,\\,magnification}$',fontsize=18)
+    im=ax.imshow(r_m,origin='lower',extent=[1-0.5,nbins+0.5,1-0.5,nbins+0.5],
+                 norm=LogNorm(vmin=0.01,vmax=1),interpolation='nearest',cmap=cm.bone)
+    ax.set_xlabel('${\\rm Bin\\,\\,1}$',fontsize=18)
+    ax.set_ylabel('${\\rm Bin\\,\\,2}$',fontsize=18)
+    plt.colorbar(im)
+    plt.savefig('../Draft/Figs/r_ij_mb_wm.pdf',bbox_inches='tight')
+
+    plt.figure(); ax=plt.gca();
+    ax.set_title('$R^{\\alpha,\\beta}_{\\ell=400},\\,\\,{\\rm w.o.\\,\\,magnification}$',fontsize=18)
+    im=ax.imshow(np.fabs(r_d),origin='lower',extent=[1-0.5,nbins+0.5,1-0.5,nbins+0.5],
+                 norm=LogNorm(vmin=0.01,vmax=1),interpolation='nearest',cmap=cm.bone)
+    ax.set_xlabel('${\\rm Bin\\,\\,1}$',fontsize=18)
+    ax.set_ylabel('${\\rm Bin\\,\\,2}$',fontsize=18)
+    plt.colorbar(im)
+    plt.savefig('../Draft/Figs/r_ij_mb_wom.pdf',bbox_inches='tight')
 
 def diagonalize(a,f) :
     mm=np.linalg.cholesky(np.linalg.inv(f))
-    ll=np.linalg.cholesky(f)
     ap=np.array([np.dot(np.transpose(mm[l]),np.dot(a[l],mm[l])) for l in np.arange(nell)])
     lam,e=np.linalg.eigh(-ap); lam*=-1
     v=np.array([np.dot(mm[l],e[l]) for l in np.arange(nell)])
 
     return v,lam
 
-vv,llam=diagonalize(d_ij_fid,c_ij_fid)
-proj=np.identity(nbins); proj[num_modes:,num_modes:]=0
-filt=np.array([np.dot(c_ij_fid[l],np.dot(vv[l],np.dot(proj,np.transpose(vv[l])))) for l in np.arange(nell)])
+vv2,llam2=diagonalize(d_ij_fid,c_ij_fid)
+isort=np.argsort(-np.sum((larr+0.5)[:,None]*llam2**2,axis=0))
+vv=vv2[:,:,isort]
+llam=np.array([np.diag(np.dot(np.transpose(vv[l]),np.dot(d_ij_fid[l],vv[l]))) for l in np.arange(nell)])
 
-c_all_filtered=np.array([np.dot(filt[l],np.dot(c_ij_fid[l],np.transpose(filt[l]))) for l in np.arange(nell)])
-c_ll_filtered=np.array([np.dot(filt[l],np.dot(cl_ll[l],np.transpose(filt[l]))) for l in np.arange(nell)])
-plt.figure()
-for i in np.arange(nbins)-1 :
-    plt.plot(larr,c_ll_filtered[:,i+1,i],'r-')
-    plt.plot(larr,c_all_filtered[:,i+1,i],'b-')
-plt.loglog()
+for i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] :
+    idn=np.ones(nbins); idn[i:]=0; p1=np.diag(idn); 
+    proj=np.dot(c_ij_fid[100,:,:],np.dot(vv[100,:,:],np.dot(p1,np.transpose(vv[100,:,:]))))
+    plt.figure(); plt.imshow(proj,origin='lower',interpolation='nearest',vmin=-0.1,vmax=1)
 plt.show()
-
-
+exit(1)
+#p1=np.diag
+print np.dot(np.transpose(vv[10,:,:]),np.dot(c_ij_fid[10,:,:],vv[10,:,:]))
+print np.dot(np.dot(c_ij_fid[10,:,:],vv[10,:,:]),np.transpose(vv[10,:,:]))
 exit(1)
 
-fish=np.sum((larr+0.5)[:,None]*llam**2,axis=0)
-plt.plot(fish); plt.show()
-exit(1)
 
 
+fisher=(larr+0.5)[:,None]*llam**2
+fish_permode=np.sum(fisher,axis=0)
+fish_cum=np.cumsum(fish_permode)
 
-c_ij_fid[:,i1,i1]+=sigma_gamma**2*(np.pi/180./60.)**2/ndens[i1]
-larr=np.arange(LMAX+1)
-
-c_ij_fid=c_ij_fid[0:,:,:]
-d_ij_fid=d_ij_fid[0:,:,:]
-larr=larr[0:]
-nell=len(larr)
-
-#Compute power spectra
-metric=np.linalg.inv(c_ij_fid)
-
-def change_basis(c,m,ev) :
-    return np.array([np.diag(np.dot(np.transpose(ev[l]),np.dot(m[l],np.dot(c[l],np.dot(m[l],ev[l])))))
-                     for l in np.arange(nell)])
-
-def diagonalize(c,m) :
-    im=np.linalg.inv(m)
-    ll=np.linalg.cholesky(m)
-    ill=np.linalg.cholesky(im)
-    cl=np.array([np.dot(np.transpose(ll[l]),np.dot(c[l],ll[l])) for l in np.arange(nell)])
-    c_p,v=np.linalg.eigh(-cl)
-    ev=v#np.array([np.dot(ill[l],v[l]) for l in np.arange(nell)])
-
-    return ev,c_p
-
-#Get K-L modes
-e_v,d_p_fid=diagonalize(d_ij_fid,metric)
-e_o=e_v
-#c_p_fid=change_basis(c_ij_fid,metric,e_o)
-
-'''
-#Plot power spectrum of K-L modes
 if plot_stuff :
     plt.figure();
-    ax=plt.gca()
-    ax.imshow([[0.,1.],[0.,1.]],extent=[700,1600,140,200],interpolation='bicubic',cmap=cm.summer,aspect='auto')
-    plt.text(220,160,'$p\\in[1,16]$',{'fontsize':16})
-    for i in np.arange(nbins) :
-        c=c_p_fid[:,i]
-        col=cm.summer((i+0.5)/nbins)
-        plt.plot(larr,c,color=col,lw=2)
-    plt.ylabel("$D_\\ell^p$",fontsize=16)
-    plt.xlabel("$\\ell$",fontsize=16)
-    plt.xlim([2,2000])
-    plt.ylim([0.5,300])
-    plt.loglog()
-#    plt.savefig('../Draft/Figs/d_p_wl.pdf',bbox_inches='tight')
-'''
+    imodes=np.arange(nbins)+1
+    plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,
+             label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0);
+    plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,
+             label='${\\rm Information\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
+    plt.legend(loc='upper right',frameon=False)
+    plt.xlabel('${\\rm KL\\,\\,mode\\,\\,order}\\,\\,p_{\\rm KL}$',fontsize=18)
+    plt.ylabel('${\\rm Relative\\,information\\,\\,content}$',fontsize=18)
+    plt.xlim([0.9,9.5])
+    plt.ylim([-0.03,1.03])
+    plt.savefig('../Draft/Figs/information_mb.pdf',bbox_inches='tight')
 
-#Plot K-L eigenvectors
 if plot_stuff :
-    plt.figure()
-    ax=plt.gca()
-    zbarr=0.5*(z0bins+zfbins)
-    ax.plot([0.5,2.3],[0,0],'k--')
-    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.35,-0.30],interpolation='bicubic',cmap=cm.winter,aspect='auto')
-    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.42,-0.37],interpolation='bicubic',cmap=cm.autumn,aspect='auto')
-    plt.text(1.345,-0.335,'$1^{\\rm st}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
-    plt.text(1.33 ,-0.41 ,'$2^{\\rm nd}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
-    for i in (1+np.arange(189))*10 :
-        if e_o[i,1,1]>0 :
-            sign=1
-        else :
-            sign=-1
-        ax.plot(zbarr,sign*e_o[  i,:,0]/np.sqrt(np.sum(e_o[  i,:,0]**2)),'o-',
-                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
-        if e_o[i,2,1]>0 :
-            sign=-1
-        else :
-            sign=1
-        ax.plot(zbarr,sign*e_o[  i,:,1]/np.sqrt(np.sum(e_o[  i,:,1]**2)),'o-',
-                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
-    plt.xlabel('$z_\\alpha$',fontsize=18)
-    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf E}_\\ell)^1_\\alpha$',fontsize=18)
-    plt.xlim([0.5,2.3])
-#    plt.savefig('../Draft/Figs/kl_modes_wl.pdf',bbox_inches='tight')
+    plt.show();
+
+ch=np.linalg.cholesky(c_ij_fid)
+ww=np.array([np.dot(np.transpose(ch[l]),vv[l]) for l in np.arange(nell)])
+
+plt.figure()
+for i in (1+np.arange(99))*10 :
+    v=vv[i,:,0]; v/=np.sqrt(np.sum(v**2))
+    sign=1
+    if v[10]<0 :
+        sign=-1
+    plt.plot(zbarr[ib_off:],v*sign,'ro-')
+
+    v=vv[i,:,1]; v/=np.sqrt(np.sum(v**2))
+    sign=1
+    if v[10]<0 :
+        sign=-1
+    plt.plot(zbarr[ib_off:],v*sign,'bo-')
 plt.show()
+
+
+exit(1)

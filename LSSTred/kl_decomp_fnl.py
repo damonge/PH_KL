@@ -170,7 +170,7 @@ if plot_stuff :
         ax.plot(zbarr,e_o[i_ell,:,i]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[i_ell,:,i]**2*ndens)),'o-',
                 markeredgewidth=0,color=cm.winter((i+0.5)/nbtop))
     plt.xlabel('$z_\\alpha$',fontsize=18)
-    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf E}_{%d})^p_\\alpha$'%i_ell,fontsize=18)
+    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf F}_{%d})^p_\\alpha$'%i_ell,fontsize=18)
     plt.savefig('../Draft/Figs/kl_modes_gc.pdf',bbox_inches='tight')
 
 
@@ -181,7 +181,8 @@ fish_cum=np.cumsum(fish_permode)
 if plot_stuff :
     plt.figure();
     imodes=np.arange(nbins)+1
-    plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
+    plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,
+             label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
     plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,label='${\\rm Information\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
     plt.legend(loc='upper right',frameon=False)
     plt.xlabel('${\\rm KL\\,\\,mode\\,\\,order}\\,\\,p_{\\rm KL}$',fontsize=18)

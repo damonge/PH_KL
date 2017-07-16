@@ -7,7 +7,7 @@ from scipy.integrate import quad
 import matplotlib.cm as cm
 import common_gofish as cgf
 
-plot_stuff=False
+plot_stuff=True
 SZ_RED=0.05
 LMAX=2000
 nsamp=1
@@ -166,16 +166,20 @@ if plot_stuff :
     plt.text(1.345,-0.335,'$1^{\\rm st}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
     plt.text(1.33 ,-0.41 ,'$2^{\\rm nd}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
     for i in (1+np.arange(199))*10 :
-        ax.plot(zbarr,e_o[  i,:,0]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens)),'o-',markeredgewidth=0,
-                color=cm.winter((i+0.5)/2001))
+        ax.plot(zbarr,e_o[  i,:,0]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens)),'o-',
+                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
+#        ax.plot(zbarr,e_o[  i,:,0]*ndens/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens**2)),'o-',
+#                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
         if e_o[i,2,1]>0 :
             sign=-1
         else :
             sign=1
         ax.plot(zbarr,sign*e_o[  i,:,1]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens)),'o-',
                 markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
+#        ax.plot(zbarr,sign*e_o[  i,:,1]*ndens/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens**2)),'o-',
+#                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
     plt.xlabel('$z_\\alpha$',fontsize=18)
-    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf E}_\\ell)^1_\\alpha$',fontsize=18)
+    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf F}_\\ell)^p_\\alpha$',fontsize=18)
     plt.xlim([0.5,2.3])
     plt.savefig('../Draft/Figs/kl_modes_wl.pdf',bbox_inches='tight')
 
