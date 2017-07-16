@@ -162,6 +162,18 @@ def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False,llim=None) :
 
     print "WOO"
     stout=""
+#    stout+='[och2]\n'
+#    stout+='x= 0.1197\n'
+#    stout+='dx=0.0010\n'
+#    stout+='is_free=yes\n'
+#    stout+='onesided=0\n'
+#    stout+='\n'
+#    stout+='[A_s]\n'
+#    stout+='x= 2.19\n'
+#    stout+='dx=0.01\n'
+#    stout+='is_free=yes\n'
+#    stout+='onesided=0\n'
+#    stout+='\n'
     stout+='['+parname+']\n'
     stout+='x= %lE\n'%par0
     stout+='dx=%lE\n'%dpar
