@@ -6,6 +6,7 @@ import pyccl as ccl
 from scipy.integrate import quad
 import matplotlib.cm as cm
 import common_gofish as cgf
+import os
 
 plot_stuff=True
 SZ_RED=0.05
@@ -83,15 +84,16 @@ if plot_stuff:
     plt.savefig('../Draft/Figs/nz_lsst_wl.pdf',bbox_inches='tight')
 
 #Compute power spectra
-c_ij_fid,c_ij_mfn,c_ij_pfn=cgf.run_gofish(run_name,LMAX,parname,par0,dpar,tracertype)
+c_ij_fid,c_ij_mfn,c_ij_pfn=cgf.run_gofish(run_name,LMAX,parname,par0,dpar,tracertype,marg_all=False)
 n_ij_fid=np.zeros_like(c_ij_fid)
 for i1 in np.arange(nbins) :
     n_ij_fid[:,i1,i1]=sigma_gamma**2*(np.pi/180./60.)**2/ndens[i1]
     c_ij_fid[:,i1,i1]+=n_ij_fid[:,i1,i1]
-c_ij_dfn=(c_ij_pfn-c_ij_mfn)/(2*dpar)
+c_ij_dfn=c_ij_fid-n_ij_fid
 larr=np.arange(LMAX+1)
 inv_cij=np.linalg.inv(c_ij_fid)
-metric=np.linalg.inv(n_ij_fid)
+in_ij_fid=np.linalg.inv(n_ij_fid)
+metric=in_ij_fid
 dprod=np.array([np.dot(c_ij_dfn[l,:,:],inv_cij[l,:,:]) for l in np.arange(LMAX+1)])
 fish=(larr+0.5)*np.array([np.trace(np.dot(d,d)) for d in dprod])
 sigma=np.sqrt(1./np.sum(fish))
@@ -111,7 +113,6 @@ if plot_stuff :
     plt.ylim([7E-10,2E-6])
     plt.savefig('../Draft/Figs/c_ij_wl.pdf',bbox_inches='tight')
 
-
 def change_basis(c,m,ev) :
     print np.shape(c), np.shape(m), np.shape(ev)
     return np.array([np.diag(np.dot(np.transpose(ev[l]),np.dot(m[l],np.dot(c[l],np.dot(m[l],ev[l])))))
@@ -129,11 +130,12 @@ def diagonalize(c,m) :
     return ev,c_p
 
 #Get K-L modes
-e_v,c_p_fid=diagonalize(c_ij_fid,np.linalg.inv(n_ij_fid))
+e_v,c_p_fid=diagonalize(c_ij_fid,metric)
 c_p_dfn  =change_basis(c_ij_dfn,metric,e_v)
 fisher=(larr+0.5)[:,None]*(c_p_dfn/c_p_fid)**2
 isort=np.argsort(-np.sum(fisher,axis=0))
 e_o=e_v[:,:,isort]
+f_o=np.array([np.dot(in_ij_fid[l],e_o[l,:,:]) for l in np.arange(LMAX+1)])
 c_p_fid=change_basis(c_ij_fid,metric,e_o)
 c_p_dfn=change_basis(c_ij_dfn,metric,e_o)
 
@@ -154,6 +156,58 @@ if plot_stuff :
     plt.loglog()
     plt.savefig('../Draft/Figs/d_p_wl.pdf',bbox_inches='tight')
 
+#Tomography, 1 bin
+msk1=np.zeros(nbins); msk1[:]=1; f1=ndens*msk1/np.sqrt(np.sum((ndens*msk1)**2));
+f_tm1=f1[None,:,None]*np.ones([LMAX+1,nbins,1])
+#Tomograpy, 2 bins
+msk1=np.zeros(nbins); msk1[:8]=1; f1=ndens*msk1/np.sqrt(np.sum((ndens*msk1)**2));
+msk2=np.zeros(nbins); msk2[8:]=1; f2=ndens*msk2/np.sqrt(np.sum((ndens*msk2)**2));
+f_tm2=(np.transpose([f1,f2]))[None,:,:]*(np.ones(LMAX+1))[:,None,None];
+#Tomograpy, 3 bins
+msk1=np.zeros(nbins); msk1[:5]  =1; f1=ndens*msk1/np.sqrt(np.sum((ndens*msk1)**2));
+msk2=np.zeros(nbins); msk2[5:10]=1; f2=ndens*msk2/np.sqrt(np.sum((ndens*msk2)**2));
+msk3=np.zeros(nbins); msk3[10:] =1; f3=ndens*msk3/np.sqrt(np.sum((ndens*msk3)**2));
+f_tm3=(np.transpose([f1,f2,f3]))[None,:,:]*(np.ones(LMAX+1))[:,None,None];
+#Tomograpy, 4 bins
+msk1=np.zeros(nbins); msk1[:4]  =1; f1=ndens*msk1/np.sqrt(np.sum((ndens*msk1)**2));
+msk2=np.zeros(nbins); msk2[4:8] =1; f2=ndens*msk2/np.sqrt(np.sum((ndens*msk2)**2));
+msk3=np.zeros(nbins); msk3[8:12]=1; f3=ndens*msk3/np.sqrt(np.sum((ndens*msk3)**2));
+msk4=np.zeros(nbins); msk4[12:] =1; f4=ndens*msk4/np.sqrt(np.sum((ndens*msk4)**2));
+f_tm4=(np.transpose([f1,f2,f3,f4]))[None,:,:]*(np.ones(LMAX+1))[:,None,None];
+#Tomograpy, 5 bins
+msk1=np.zeros(nbins); msk1[:3]  =1; f1=ndens*msk1/np.sqrt(np.sum((ndens*msk1)**2));
+msk2=np.zeros(nbins); msk2[3:6] =1; f2=ndens*msk2/np.sqrt(np.sum((ndens*msk2)**2));
+msk3=np.zeros(nbins); msk3[6:9] =1; f3=ndens*msk3/np.sqrt(np.sum((ndens*msk3)**2));
+msk4=np.zeros(nbins); msk4[9:12]=1; f4=ndens*msk4/np.sqrt(np.sum((ndens*msk4)**2));
+msk5=np.zeros(nbins); msk5[12:] =1; f5=ndens*msk5/np.sqrt(np.sum((ndens*msk5)**2));
+f_tm5=(np.transpose([f1,f2,f3,f4,f5]))[None,:,:]*(np.ones(LMAX+1))[:,None,None];
+#Full tomography
+f_id=((np.identity(nbins))[None,:,:])*((np.ones(LMAX+1))[:,None,None])
+print "KL, full"
+fish_kl_full=cgf.get_fisher_ll(run_name,f_o,n_ij_fid,marg_all=False)
+print "TM, Full"
+fish_tm_full=cgf.get_fisher_ll(run_name,f_id,n_ij_fid,marg_all=False)
+print "KL, 1"
+fish_kl_1=cgf.get_fisher_ll(run_name,f_o[:,:,0:1],n_ij_fid,marg_all=False)
+print "TM, 1"
+fish_tm_1=cgf.get_fisher_ll(run_name,f_tm1,n_ij_fid,marg_all=False)
+print "KL, 2"
+fish_kl_2=cgf.get_fisher_ll(run_name,f_o[:,:,0:2],n_ij_fid,marg_all=False)
+print "TM, 2"
+fish_tm_2=cgf.get_fisher_ll(run_name,f_tm2,n_ij_fid,marg_all=False)
+print "KL, 3"
+fish_kl_3=cgf.get_fisher_ll(run_name,f_o[:,:,0:3],n_ij_fid,marg_all=False)
+print "TM, 3"
+fish_tm_3=cgf.get_fisher_ll(run_name,f_tm3,n_ij_fid,marg_all=False)
+print "KL, 4"
+fish_kl_4=cgf.get_fisher_ll(run_name,f_o[:,:,0:4],n_ij_fid,marg_all=False)
+print "TM, 4"
+fish_tm_4=cgf.get_fisher_ll(run_name,f_tm4,n_ij_fid,marg_all=False)
+print "KL, 5"
+fish_kl_5=cgf.get_fisher_ll(run_name,f_o[:,:,0:5],n_ij_fid,marg_all=False)
+print "TM, 5"
+fish_tm_5=cgf.get_fisher_ll(run_name,f_tm5,n_ij_fid,marg_all=False)
+print " "
 
 #Plot K-L eigenvectors
 if plot_stuff :
@@ -161,23 +215,26 @@ if plot_stuff :
     ax=plt.gca()
     zbarr=0.5*(z0bins+zfbins)
     ax.plot([0.5,2.3],[0,0],'k--')
-    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.35,-0.30],interpolation='bicubic',cmap=cm.winter,aspect='auto')
-    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.42,-0.37],interpolation='bicubic',cmap=cm.autumn,aspect='auto')
+    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.35,-0.30],interpolation='bicubic',
+              cmap=cm.winter,aspect='auto')
+    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.42,-0.37],interpolation='bicubic',
+              cmap=cm.autumn,aspect='auto')
     plt.text(1.345,-0.335,'$1^{\\rm st}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
     plt.text(1.33 ,-0.41 ,'$2^{\\rm nd}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
     for i in (1+np.arange(199))*10 :
-        ax.plot(zbarr,e_o[  i,:,0]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens)),'o-',
-                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
-#        ax.plot(zbarr,e_o[  i,:,0]*ndens/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens**2)),'o-',
+#        ax.plot(zbarr,e_o[  i,:,0]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens)),'o-',
 #                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
+        ax.plot(zbarr,e_o[  i,:,0]*ndens/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens**2)),'o-',
+                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
         if e_o[i,2,1]>0 :
             sign=-1
         else :
             sign=1
-        ax.plot(zbarr,sign*e_o[  i,:,1]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens)),'o-',
-                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
-#        ax.plot(zbarr,sign*e_o[  i,:,1]*ndens/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens**2)),'o-',
+#        ax.plot(zbarr,sign*e_o[  i,:,1]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens)),'o-',
 #                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
+        ax.plot(zbarr,sign*e_o[  i,:,1]*ndens/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens**2)),'o-',
+                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
+    ax.plot(zbarr,f_tm1[0,:,0]/np.sqrt(np.sum(f_tm1[0,:,0]**2)),'ko-',markeredgewidth=0)
     plt.xlabel('$z_\\alpha$',fontsize=18)
     plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf F}_\\ell)^p_\\alpha$',fontsize=18)
     plt.xlim([0.5,2.3])
@@ -190,15 +247,18 @@ fish_cum=np.cumsum(fish_permode)
 if plot_stuff :
     plt.figure();
     imodes=np.arange(nbins)+1
-    plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
-    plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,label='${\\rm Information\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
+    plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,
+             label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
+    plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,
+             label='${\\rm Information\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
     plt.legend(loc='upper right',frameon=False)
     plt.xlabel('${\\rm KL\\,\\,mode\\,\\,order}\\,\\,p_{\\rm KL}$',fontsize=18)
     plt.ylabel('${\\rm Relative\\,information\\,\\,content}$',fontsize=18)
-    plt.yscale('log')
+#    plt.yscale('log')
     plt.xlim([0.9,nbins+0.1])
-    plt.ylim([3E-7,1.2])
+#    plt.ylim([3E-7,1.2])
+    plt.ylim([-0.02,1.02])
     plt.savefig('../Draft/Figs/information_wl.pdf',bbox_inches='tight')
-    
+
 if plot_stuff :
     plt.show()

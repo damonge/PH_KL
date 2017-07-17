@@ -152,7 +152,7 @@ def read_cls_class(fname) :
 
     return dic
 
-def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False,llim=None) :
+def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False,llim=None,marg_all=True) :
     if llim==None :
         if trtype=='gal_clustering' :
             l_limber=lmx+1
@@ -163,54 +163,55 @@ def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False,llim=None) :
 
     print "WOO"
     stout=""
-    stout+='[och2]\n'
-    stout+='x= 0.1197\n'
-    stout+='dx=0.0010\n'
-    stout+='is_free=yes\n'
-    stout+='onesided=0\n'
-    stout+='\n'
-    stout+='[obh2]\n'
-    stout+='x= 0.02222\n'
-    stout+='dx=0.0001\n'
-    stout+='is_free=yes\n'
-    stout+='onesided=0\n'
-    stout+='\n'
-    stout+='[hh]\n'
-    stout+='x= 0.67\n'
-    stout+='dx=0.01\n'
-    stout+='is_free=yes\n'
-    stout+='onesided=0\n'
-    stout+='\n'
-    stout+='[ns]\n'
-    stout+='x= 0.96\n'
-    stout+='dx=0.01\n'
-    stout+='is_free=yes\n'
-    stout+='onesided=0\n'
-    stout+='\n'
-    stout+='[A_s]\n'
-    stout+='x= 2.19\n'
-    stout+='dx=0.01\n'
-    stout+='is_free=yes\n'
-    stout+='onesided=0\n'
-    stout+='\n'
-    stout+='[mnu]\n'
-    stout+='x= 60.0\n'
-    stout+='dx= 5.0\n'
-    stout+='is_free=yes\n'
-    stout+='onesided=0\n'
-    stout+='\n'
-    stout+='[lmcb]\n'
-    stout+='x= 14.08\n'
-    stout+='dx=0.3\n'
-    stout+='is_free=yes\n'
-    stout+='onesided=0\n'
-    stout+='\n'
-    stout+='[etab]\n'
-    stout+='x= 0.5\n'
-    stout+='dx=0.1\n'
-    stout+='is_free=yes\n'
-    stout+='onesided=0\n'
-    stout+='\n'
+    if marg_all :
+        stout+='[och2]\n'
+        stout+='x= 0.1197\n'
+        stout+='dx=0.0010\n'
+        stout+='is_free=yes\n'
+        stout+='onesided=0\n'
+        stout+='\n'
+        stout+='[obh2]\n'
+        stout+='x= 0.02222\n'
+        stout+='dx=0.0001\n'
+        stout+='is_free=yes\n'
+        stout+='onesided=0\n'
+        stout+='\n'
+        stout+='[hh]\n'
+        stout+='x= 0.67\n'
+        stout+='dx=0.01\n'
+        stout+='is_free=yes\n'
+        stout+='onesided=0\n'
+        stout+='\n'
+        stout+='[ns]\n'
+        stout+='x= 0.96\n'
+        stout+='dx=0.01\n'
+        stout+='is_free=yes\n'
+        stout+='onesided=0\n'
+        stout+='\n'
+        stout+='[A_s]\n'
+        stout+='x= 2.19\n'
+        stout+='dx=0.01\n'
+        stout+='is_free=yes\n'
+        stout+='onesided=0\n'
+        stout+='\n'
+        stout+='[mnu]\n'
+        stout+='x= 60.0\n'
+        stout+='dx= 5.0\n'
+        stout+='is_free=yes\n'
+        stout+='onesided=0\n'
+        stout+='\n'
+        stout+='[lmcb]\n'
+        stout+='x= 14.08\n'
+        stout+='dx=0.3\n'
+        stout+='is_free=yes\n'
+        stout+='onesided=0\n'
+        stout+='\n'
+        stout+='[etab]\n'
+        stout+='x= 0.5\n'
+        stout+='dx=0.1\n'
+        stout+='is_free=yes\n'
+        stout+='onesided=0\n'
+        stout+='\n'
     stout+='['+parname+']\n'
     stout+='x= %lE\n'%par0
     stout+='dx=%lE\n'%dpar
@@ -271,6 +272,117 @@ def run_gofish(rname,lmx,parname,par0,dpar,trtype,w_IA=False,llim=None) :
         return dic_fid['cl_dd'],dic_mfn['cl_dd'],dic_pfn['cl_dd'],
     else :
         return dic_fid['cl_ll'],dic_mfn['cl_ll'],dic_pfn['cl_ll'],
+
+def get_fisher_ll(rname,mat_project,nij,marg_all=True) :
+    nl=len(mat_project)
+    nel=len(mat_project[0,0])
+    if marg_all :
+        npar=9
+        fisher_prior=np.diag(1./(np.array([1E6,1.5E-3,1.0E-2,1.6E-4,5E-3,1E-2,1E6,1E6,1E6]))**2)
+    else :
+        npar=1
+        fisher_prior=np.diag(1./(np.array([1E6]))**2)
+    larr=np.arange(nl)
+    def transform_matrix(c,m) :
+        return np.array([np.dot(np.transpose(m[l]),np.dot(c[l],m[l])) for l in np.arange(nl)])
+    dic=read_cls_class('outputs_'+rname+'/run_fidcl.dat');
+    cl_ij_fid=transform_matrix(dic['cl_ll']+nij,mat_project)
+    il_ij_fid=np.linalg.inv(cl_ij_fid)
+    dl_all=np.zeros([npar,nl,nel,nel])
+    ipar=0
+    if marg_all :
+    #mnu
+        dic=read_cls_class('outputs_'+rname+'/run_mmnucl.dat'); cl_ij_mmnu=dic['cl_ll']
+        dic=read_cls_class('outputs_'+rname+'/run_pmnucl.dat'); cl_ij_pmnu=dic['cl_ll']
+        dl_all[ipar,:,:,:]=transform_matrix((cl_ij_pmnu-cl_ij_mmnu)/(2*5.),mat_project); ipar+=1
+    #och2
+        dic=read_cls_class('outputs_'+rname+'/run_moch2cl.dat'); cl_ij_moch2=dic['cl_ll']
+        dic=read_cls_class('outputs_'+rname+'/run_poch2cl.dat'); cl_ij_poch2=dic['cl_ll']
+        dl_all[ipar,:,:,:]=transform_matrix((cl_ij_poch2-cl_ij_moch2)/(2*0.001),mat_project); ipar+=1
+    #hh
+        dic=read_cls_class('outputs_'+rname+'/run_mhhcl.dat'); cl_ij_mhh=dic['cl_ll']
+        dic=read_cls_class('outputs_'+rname+'/run_phhcl.dat'); cl_ij_phh=dic['cl_ll']
+        dl_all[ipar,:,:,:]=transform_matrix((cl_ij_phh-cl_ij_mhh)/(2*0.01),mat_project); ipar+=1
+    #obh2
+        dic=read_cls_class('outputs_'+rname+'/run_mobh2cl.dat'); cl_ij_mobh2=dic['cl_ll']
+        dic=read_cls_class('outputs_'+rname+'/run_pobh2cl.dat'); cl_ij_pobh2=dic['cl_ll']
+        dl_all[ipar,:,:,:]=transform_matrix((cl_ij_pobh2-cl_ij_mobh2)/(2*0.0001),mat_project); ipar+=1
+    #ns
+        dic=read_cls_class('outputs_'+rname+'/run_mnscl.dat'); cl_ij_mns=dic['cl_ll']
+        dic=read_cls_class('outputs_'+rname+'/run_pnscl.dat'); cl_ij_pns=dic['cl_ll']
+        dl_all[ipar,:,:,:]=transform_matrix((cl_ij_pns-cl_ij_mns)/(2*0.01),mat_project); ipar+=1
+    #A_s
+        dic=read_cls_class('outputs_'+rname+'/run_mA_scl.dat'); cl_ij_mA_s=dic['cl_ll']
+        dic=read_cls_class('outputs_'+rname+'/run_pA_scl.dat'); cl_ij_pA_s=dic['cl_ll']
+        dl_all[ipar,:,:,:]=transform_matrix((cl_ij_pA_s-cl_ij_mA_s)/(2*0.01),mat_project); ipar+=1
+    #lmcb
+        dic=read_cls_class('outputs_'+rname+'/run_mlmcbcl.dat'); cl_ij_mlmcb=dic['cl_ll']
+        dic=read_cls_class('outputs_'+rname+'/run_plmcbcl.dat'); cl_ij_plmcb=dic['cl_ll']
+        dl_all[ipar,:,:,:]=transform_matrix((cl_ij_plmcb-cl_ij_mlmcb)/(2*0.3),mat_project); ipar+=1
+    #etab
+        dic=read_cls_class('outputs_'+rname+'/run_metabcl.dat'); cl_ij_metab=dic['cl_ll']
+        dic=read_cls_class('outputs_'+rname+'/run_petabcl.dat'); cl_ij_petab=dic['cl_ll']
+        dl_all[ipar,:,:,:]=transform_matrix((cl_ij_petab-cl_ij_metab)/(2*0.1),mat_project); ipar+=1
+    #w0
+    dic=read_cls_class('outputs_'+rname+'/run_mw0cl.dat'); cl_ij_mw0=dic['cl_ll']
+    dic=read_cls_class('outputs_'+rname+'/run_pw0cl.dat'); cl_ij_pw0=dic['cl_ll']
+    dl_all[ipar,:,:,:]=transform_matrix((cl_ij_pw0-cl_ij_mw0)/(2*0.05),mat_project); ipar+=1
+
+#    fisher_prior=np.diag(1./(np.array([1E6,1E-6,1E-6,1E-6,1E-6,1E-6,1E-6,1E-6,1E6]))**2)
+
+    for i1 in np.arange(npar) :
+        for l in larr :
+            dl_all[i1,l,:,:]=np.dot(dl_all[i1,l],il_ij_fid[l])
+
+    fisher=np.zeros([npar,npar])
+    for i1 in np.arange(npar) :
+        d1=dl_all[i1]
+        for i2 in np.arange(npar) :
+            d2=dl_all[i2]
+            fisher[i1,i2]=np.sum((larr+0.5)*np.array([np.trace(np.dot(d1[l],d2[l])) for l in larr]))
+    fisher+=fisher_prior
+    stout=""
+    for s in np.sqrt(np.diag(np.linalg.inv(fisher))) :
+        stout+="%.3lE "%s
+    print stout
+
+    return fisher
+
+def get_fisher_dd(rname,mat_project,nij) :
+    nl=len(mat_project)
+    nel=len(mat_project[0,0])
+    npar=1
+    larr=np.arange(nl)
+    def transform_matrix(c,m) :
+        return np.array([np.dot(np.transpose(m[l]),np.dot(c[l],m[l])) for l in np.arange(nl)])
+    dic=read_cls_class('outputs_'+rname+'/run_fidcl.dat');
+    cl_ij_fid=transform_matrix(dic['cl_dd']+nij,mat_project)
+    il_ij_fid=np.linalg.inv(cl_ij_fid)
+    dl_all=np.zeros([npar,nl,nel,nel])
+    #fnl
+    dic=read_cls_class('outputs_'+rname+'/run_mfnlcl.dat'); cl_ij_mfnl=dic['cl_dd']
+    dic=read_cls_class('outputs_'+rname+'/run_pfnlcl.dat'); cl_ij_pfnl=dic['cl_dd']
+    dl_all[0,:,:,:]=transform_matrix((cl_ij_pfnl-cl_ij_mfnl)/(2*0.5),mat_project)
+
+    fisher_prior=np.diag(1./(np.array([1E6]))**2)
+
+    for i1 in np.arange(npar) :
+        for l in larr :
+            dl_all[i1,l,:,:]=np.dot(dl_all[i1,l],il_ij_fid[l])
+
+    fisher=np.zeros([npar,npar])
+    for i1 in np.arange(npar) :
+        d1=dl_all[i1]
+        for i2 in np.arange(npar) :
+            d2=dl_all[i2]
+            fisher[i1,i2]=np.sum((larr+0.5)*np.array([np.trace(np.dot(d1[l],d2[l])) for l in larr]))
+    fisher+=fisher_prior
+    stout=""
+    for s in np.sqrt(np.diag(np.linalg.inv(fisher))) :
+        stout+="%.3lE "%s
+    print stout
+
+    return fisher
 
 
 #def compute_cls(oc,ob,h,a_s,ns,w,nbins,zarr,nz_bins,lmax,fname_out=False) :
