@@ -89,8 +89,7 @@ n_ij_fid=np.zeros_like(c_ij_fid)
 for i1 in np.arange(nbins) :
     n_ij_fid[:,i1,i1]=sigma_gamma**2*(np.pi/180./60.)**2/ndens[i1]
     c_ij_fid[:,i1,i1]+=n_ij_fid[:,i1,i1]
-#c_ij_dfn=c_ij_fid-n_ij_fid
-c_ij_dfn=(c_ij_pfn-c_ij_mfn)/(2*dpar)
+c_ij_dfn=c_ij_fid-n_ij_fid
 larr=np.arange(LMAX+1)
 inv_cij=np.linalg.inv(c_ij_fid)
 in_ij_fid=np.linalg.inv(n_ij_fid)
@@ -221,6 +220,9 @@ fish_kl_6=cgf.get_fisher_dd(run_name,f_o[:,:,0:6],n_ij_fid)
 print "TM, 6",
 fish_tm_6=cgf.get_fisher_dd(run_name,f_tm6,n_ij_fid)
 
+#sigmas_kl=np.array([np.sqrt(1./np.sum(cgf.get_fisher_dd(run_name,f_o[:,:,:i],n_ij_fid,do_print=False))) for i in np.arange(nbins)+1])
+#np.savetxt("sigmas_klsn.txt",np.transpose([np.arange(nbins)+1,sigmas_kl]))
+
 #Plot K-L eigenvectors
 if plot_stuff :
     plt.figure()
@@ -232,10 +234,11 @@ if plot_stuff :
     i_ell=30
     plt.text(1.12,-0.203,'$p\\in[1,%d]$'%nbtop,{'fontsize':16})
     for i in np.arange(nbtop) :
-        ax.plot(zbarr,e_o[i_ell,:,i]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[i_ell,:,i]**2*ndens)),'o-',
+        ax.plot(zbarr,e_o[i_ell,:,i]*ndens/np.sqrt(np.sum(e_o[i_ell,:,i]**2*ndens**2)),'o-',
                 markeredgewidth=0,color=cm.winter((i+0.5)/nbtop))
     plt.xlabel('$z_\\alpha$',fontsize=18)
-    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf F}_{%d})^p_\\alpha$'%i_ell,fontsize=18)
+    plt.ylim([-0.45,0.45])
+    plt.ylabel('$\\bar{n}^\\alpha\\,({\\sf F}_{%d})^p_\\alpha$'%i_ell,fontsize=18)
     plt.savefig('../Draft/Figs/kl_modes_gc.pdf',bbox_inches='tight')
 
 
@@ -247,11 +250,11 @@ if plot_stuff :
     plt.figure();
     imodes=np.arange(nbins)+1
     plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,
-             label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
-    plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,label='${\\rm Information\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
+             label='$S/N{\\rm\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
+    plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,label='$S/N{\\rm\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
     plt.legend(loc='upper right',frameon=False)
     plt.xlabel('${\\rm KL\\,\\,mode\\,\\,order}\\,\\,p_{\\rm KL}$',fontsize=18)
-    plt.ylabel('${\\rm Relative\\,information\\,\\,content}$',fontsize=18)
+    plt.ylabel('${\\rm Fraction\\,\\,of\\,\\,total\\,\\,}S/N$',fontsize=18)
     plt.xlim([0.9,nbins+0.1])
     plt.ylim([0,1.0])
     plt.savefig('../Draft/Figs/information_gc.pdf',bbox_inches='tight')

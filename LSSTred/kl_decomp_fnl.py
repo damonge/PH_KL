@@ -11,7 +11,7 @@ import os
 plot_stuff=True
 SZ_RED=0.02
 LMAX=500
-nsamp=1.
+nsamp=0.5
 ZMAX=2
 tracertype='gal_clustering'
 parname='fnl'
@@ -55,6 +55,7 @@ nzarr=nz_red(zarr)
 
 #Selection function for individual bins
 z0bins,zfbins=get_edges(zedge_lo,zedge_hi,SZ_RED,nsamp)
+zbarr=0.5*(z0bins+zfbins)
 nbins=len(z0bins)
 nz_bins=np.array([nzarr*pdf_photo(zarr,z0,zf,sz_red(0.5*(z0+zf))) for z0,zf in zip(z0bins,zfbins)])
 xcorr=np.array([[np.sum(nz1*nz2) for nz1 in nz_bins] for nz2 in nz_bins])
@@ -81,7 +82,6 @@ if plot_stuff :
     plt.xlim([0,1.2*zedge_hi])
     plt.xlabel('$z$',fontsize=18)
     plt.ylabel('$N(z)\\,\\,[{\\rm arcmin}^{-2}]$',fontsize=18)
-    plt.savefig('../Draft/Figs/nz_lsst_gc.pdf',bbox_inches='tight')
 
 #Compute power spectra
 c_ij_fid,c_ij_mfn,c_ij_pfn=cgf.run_gofish(run_name,LMAX,parname,par0,dpar,tracertype,marg_all=False);
@@ -89,7 +89,6 @@ n_ij_fid=np.zeros_like(c_ij_fid)
 for i1 in np.arange(nbins) :
     n_ij_fid[:,i1,i1]=sigma_gamma**2*(np.pi/180./60.)**2/ndens[i1]
     c_ij_fid[:,i1,i1]+=n_ij_fid[:,i1,i1]
-#c_ij_dfn=c_ij_fid-n_ij_fid
 c_ij_dfn=(c_ij_pfn-c_ij_mfn)/(2*dpar)
 larr=np.arange(LMAX+1)
 inv_cij=np.linalg.inv(c_ij_fid)
@@ -114,23 +113,52 @@ if plot_stuff :
     plt.ylim([5E-7,1E-4])
     plt.savefig('../Draft/Figs/c_ij_gc.pdf',bbox_inches='tight')
 
-def change_basis(c,m,ev) :
-    print np.shape(c), np.shape(m), np.shape(ev)
-    return np.array([np.diag(np.dot(np.transpose(ev[l]),np.dot(m[l],np.dot(c[l],np.dot(m[l],ev[l])))))
-                     for l in np.arange(LMAX+1)])
-
-def diagonalize(c,m) :
-    im=np.linalg.inv(m)
-    ll=np.linalg.cholesky(m)
-    ill=np.linalg.cholesky(im)
-    cl=np.array([np.dot(np.transpose(ll[l]),np.dot(c[l],ll[l])) for l in np.arange(LMAX+1)])
-    c_p,v=np.linalg.eigh(cl)
-    ev=np.array([np.dot(np.transpose(ill[l]),v[l]) for l in np.arange(LMAX+1)])
-
-    iden=change_basis(im,m,ev)
-    return ev,c_p
+def diagonalize(dc,c) :
+    mm=np.linalg.cholesky(np.linalg.inv(c))
+    dcp=np.array([np.dot(np.transpose(mm[l]),np.dot(dc[l],mm[l])) for l in np.arange(LMAX+1)])
+    dc_p,e=np.linalg.eigh(-dcp); dc_p*=-1
+    v=np.array([np.dot(mm[l],e[l]) for l in np.arange(LMAX+1)])
+    
+    return v,dc_p
 
 #Get K-L modes
+vv2,llam2=diagonalize(c_ij_dfn,c_ij_fid)
+isort=np.argsort(-np.sum((larr+0.5)[:,None]*llam2**2,axis=0))
+vv=vv2[:,:,isort]
+llam=np.array([np.diag(np.dot(np.transpose(vv[l]),np.dot(c_ij_dfn[l],vv[l]))) for l in np.arange(LMAX+1)])
+fishers=np.sum((larr+0.5)[:,None]*llam**2,axis=0)
+sigma_cumul=np.sqrt(1./np.cumsum(fishers))
+
+def get_sigma_tomo(ntomo) :
+    dn=nbins/ntomo
+    fs=[]
+    n0=0
+    while n0<nbins :
+        if n0+2*dn<=nbins :
+            nmax=n0+dn
+        else :
+            nmax=nbins
+        msk=np.zeros(nbins); msk[n0:nmax]=1; f=ndens*msk/np.sqrt(np.sum((ndens*msk)**2))
+        fs.append(f)
+        n0=nmax
+    f_tm=np.transpose(np.array(fs))[None,:,:]*(np.ones(LMAX+1))[:,None,None]
+    fish=cgf.get_fisher_dd(run_name,f_tm,n_ij_fid,do_print=False)
+    return 1./np.sqrt(np.sum(fish))
+
+sigma_tomo=np.array([get_sigma_tomo(i) for i in np.arange(nbins)+1])
+plt.figure(); plt.plot(fishers/np.sum(fishers)); plt.plot(1-np.cumsum(fishers)/np.sum(fishers))
+plt.figure(); plt.plot(sigma_cumul/sigma_cumul[-1]); plt.plot(sigma_tomo/sigma_cumul[-1])
+#np.savetxt("sigmas_kl.txt",np.transpose([np.arange(nbins)+1,sigma_cumul]))
+np.savetxt("sigmas_tm.txt",np.transpose([np.arange(nbins)+1,sigma_tomo]))
+print sigma_tomo
+plt.figure();
+nplot=10
+for i in np.arange(nplot) :
+    f=(i+0.5)/nplot
+    plt.plot(zbarr,vv[10,:,i],'-',lw=2,color=cm.bone(f))
+plt.show()
+
+'''
 e_v,c_p_fid=diagonalize(c_ij_fid,np.linalg.inv(n_ij_fid))
 c_p_dfn  =change_basis(c_ij_dfn,metric,e_v)
 fisher=(larr+0.5)[:,None]*(c_p_dfn/c_p_fid)**2
@@ -156,7 +184,9 @@ if plot_stuff :
     plt.ylim([0.8,500])
     plt.loglog()
     plt.savefig('../Draft/Figs/d_p_gc.pdf',bbox_inches='tight')
+'''
 
+f_o=vv
 #Tomography, 1 bin
 msk1=np.zeros(nbins); msk1[:]=1; f1=ndens*msk1/np.sqrt(np.sum((ndens*msk1)**2));
 f_tm1=f1[None,:,None]*np.ones([LMAX+1,nbins,1])
@@ -196,7 +226,7 @@ print "KL, full",
 fish_kl_full=cgf.get_fisher_dd(run_name,f_o,n_ij_fid)
 print "TM, Full",
 fish_tm_full=cgf.get_fisher_dd(run_name,f_id,n_ij_fid)
-print "KL, 1"
+print "KL, 1",
 fish_kl_1=cgf.get_fisher_dd(run_name,f_o[:,:,0:1],n_ij_fid)
 print "TM, 1",
 fish_tm_1=cgf.get_fisher_dd(run_name,f_tm1,n_ij_fid)
@@ -221,11 +251,12 @@ fish_kl_6=cgf.get_fisher_dd(run_name,f_o[:,:,0:6],n_ij_fid)
 print "TM, 6",
 fish_tm_6=cgf.get_fisher_dd(run_name,f_tm6,n_ij_fid)
 
+exit(1)
+
 #Plot K-L eigenvectors
 if plot_stuff :
     plt.figure()
     ax=plt.gca()
-    zbarr=0.5*(z0bins+zfbins)
     ax.imshow([[0.,1.],[0.,1.]],extent=[1.25,1.37,-0.22,-0.17],interpolation='bicubic',
               cmap=cm.winter,aspect='auto')
     nbtop=7

@@ -183,60 +183,56 @@ msk5=np.zeros(nbins); msk5[12:] =1; f5=ndens*msk5/np.sqrt(np.sum((ndens*msk5)**2
 f_tm5=(np.transpose([f1,f2,f3,f4,f5]))[None,:,:]*(np.ones(LMAX+1))[:,None,None];
 #Full tomography
 f_id=((np.identity(nbins))[None,:,:])*((np.ones(LMAX+1))[:,None,None])
-print "KL, full"
+print "KL, full",
 fish_kl_full=cgf.get_fisher_ll(run_name,f_o,n_ij_fid)
-print "TM, Full"
-fish_tm_full=cgf.get_fisher_ll(run_name,f_id,n_ij_fid)
-print "KL, 1"
+print "KL, 1",
 fish_kl_1=cgf.get_fisher_ll(run_name,f_o[:,:,0:1],n_ij_fid)
-print "TM, 1"
-fish_tm_1=cgf.get_fisher_ll(run_name,f_tm1,n_ij_fid)
-print "KL, 2"
+print "KL, 2",
 fish_kl_2=cgf.get_fisher_ll(run_name,f_o[:,:,0:2],n_ij_fid)
-print "TM, 2"
-fish_tm_2=cgf.get_fisher_ll(run_name,f_tm2,n_ij_fid)
-print "KL, 3"
+print "KL, 3",
 fish_kl_3=cgf.get_fisher_ll(run_name,f_o[:,:,0:3],n_ij_fid)
-print "TM, 3"
-fish_tm_3=cgf.get_fisher_ll(run_name,f_tm3,n_ij_fid)
-print "KL, 4"
-fish_kl_4=cgf.get_fisher_ll(run_name,f_o[:,:,0:4],n_ij_fid)
-print "TM, 4"
-fish_tm_4=cgf.get_fisher_ll(run_name,f_tm4,n_ij_fid)
-print "KL, 5"
-fish_kl_5=cgf.get_fisher_ll(run_name,f_o[:,:,0:5],n_ij_fid)
-print "TM, 5"
-fish_tm_5=cgf.get_fisher_ll(run_name,f_tm5,n_ij_fid)
-print " "
+cgf.plot_fisher_ll(['mnu','w0'],[fish_kl_1,fish_kl_2,fish_kl_3,fish_kl_full],
+                   {'fc':['#FF3333','#3333FF','#DDDD00','None'],'lw':[2,2,2,1],
+                    'lc':['#FF3333','#3333FF','#DDDD00','#000000'],
+                    'alpha':[1.,1.,1.,1.]},
+                   ['$1\\,\\,{\\rm KL\\,\\,mode}$',
+                    '$2\\,\\,{\\rm KL\\,\\,modes}$',
+                    '$3\\,\\,{\\rm KL\\,\\,modes}$',
+                    '${\\rm All\\,\\,modes}$'],fname_out='../Draft/Figs/fisher_wl.pdf')
 
 #Plot K-L eigenvectors
 if plot_stuff :
+    col_off=0.5
     plt.figure()
     ax=plt.gca()
     zbarr=0.5*(z0bins+zfbins)
     ax.plot([0.5,2.3],[0,0],'k--')
-    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.35,-0.30],interpolation='bicubic',
-              cmap=cm.winter,aspect='auto')
-    ax.imshow([[0.,1.],[0.,1.]],extent=[2.0,2.24,-0.42,-0.37],interpolation='bicubic',
-              cmap=cm.autumn,aspect='auto')
+    ax.imshow([[col_off,1.],[col_off,1.]],extent=[2.0,2.24,-0.35,-0.30],interpolation='bicubic',
+              cmap=cm.Blues,aspect='auto')
+    ax.imshow([[col_off,1.],[col_off,1.]],extent=[2.0,2.24,-0.42,-0.37],interpolation='bicubic',
+              cmap=cm.OrRd,aspect='auto')
+    ax.imshow([[col_off,1.],[col_off,1.]],extent=[2.0,2.24,-0.49,-0.44],interpolation='bicubic',
+              cmap=cm.Greens,aspect='auto')
+    ax.plot([2.05,2.20],[-0.53,-0.53],'ko--',lw=2)
     plt.text(1.345,-0.335,'$1^{\\rm st}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
     plt.text(1.33 ,-0.41 ,'$2^{\\rm nd}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
+    plt.text(1.34 ,-0.48  ,'$3^{\\rm rd}\\,\\,{\\rm mode},\\,\\,\\ell\\in[2,2000]$',{'fontsize':16})
+    plt.text(1.68 ,-0.55  ,'${\\rm Single\\,\\,bin}$',{'fontsize':16})
     for i in (1+np.arange(199))*10 :
-#        ax.plot(zbarr,e_o[  i,:,0]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens)),'o-',
-#                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
+        fcol=col_off+(1-col_off)*(i+0.5)/2001
         ax.plot(zbarr,e_o[  i,:,0]*ndens/np.sqrt(np.sum(e_o[  i,:,0]**2*ndens**2)),'o-',
-                markeredgewidth=0,color=cm.winter((i+0.5)/2001))
+                markeredgewidth=0,color=cm.Blues(fcol))
         if e_o[i,2,1]>0 :
             sign=-1
         else :
             sign=1
-#        ax.plot(zbarr,sign*e_o[  i,:,1]*np.sqrt(ndens)/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens)),'o-',
-#                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
         ax.plot(zbarr,sign*e_o[  i,:,1]*ndens/np.sqrt(np.sum(e_o[  i,:,1]**2*ndens**2)),'o-',
-                markeredgewidth=0,color=cm.autumn((i+0.5)/2001))
-    ax.plot(zbarr,f_tm1[0,:,0]/np.sqrt(np.sum(f_tm1[0,:,0]**2)),'ko-',markeredgewidth=0)
+                markeredgewidth=0,color=cm.OrRd(fcol))
+        ax.plot(zbarr,sign*e_o[  i,:,2]*ndens/np.sqrt(np.sum(e_o[  i,:,2]**2*ndens**2)),'o-',
+                markeredgewidth=0,color=cm.Greens(fcol))
+    ax.plot(zbarr,f_tm1[0,:,0]/np.sqrt(np.sum(f_tm1[0,:,0]**2)),'ko--',markeredgewidth=0,lw=2)
     plt.xlabel('$z_\\alpha$',fontsize=18)
-    plt.ylabel('$\\sqrt{\\bar{n}^\\alpha}\\,({\\sf F}_\\ell)^p_\\alpha$',fontsize=18)
+    plt.ylabel('$\\bar{n}^\\alpha\\,({\\sf F}_\\ell)^p_\\alpha\\,\\,{\\rm (normalized)}$',fontsize=18)
     plt.xlim([0.5,2.3])
     plt.savefig('../Draft/Figs/kl_modes_wl.pdf',bbox_inches='tight')
 
@@ -248,12 +244,12 @@ if plot_stuff :
     plt.figure();
     imodes=np.arange(nbins)+1
     plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,
-             label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
+             label='$S/N{\\rm\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0)
     plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,
-             label='${\\rm Information\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
+             label='$S/N{\\rm\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
     plt.legend(loc='upper right',frameon=False)
     plt.xlabel('${\\rm KL\\,\\,mode\\,\\,order}\\,\\,p_{\\rm KL}$',fontsize=18)
-    plt.ylabel('${\\rm Relative\\,information\\,\\,content}$',fontsize=18)
+    plt.ylabel('${\\rm Fraction\\,\\,of\\,\\,total\\,\\,}S/N$',fontsize=18)
 #    plt.yscale('log')
     plt.xlim([0.9,nbins+0.1])
 #    plt.ylim([3E-7,1.2])

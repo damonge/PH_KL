@@ -3,6 +3,13 @@ import os
 import struct
 import array
 import pyccl as ccl
+import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
+from matplotlib.ticker import ScalarFormatter
+
+FS=18
+
+formatter=ScalarFormatter(useOffset=False)
 
 def read_cls_class(fname) :
     f=open(fname,"rd")
@@ -278,7 +285,9 @@ def get_fisher_ll(rname,mat_project,nij,marg_all=True) :
     nel=len(mat_project[0,0])
     if marg_all :
         npar=9
-        fisher_prior=np.diag(1./(np.array([1E6,1.5E-3,1.0E-2,1.6E-4,5E-3,1E-2,1E6,1E6,1E6]))**2)
+        fisher_prior=np.diag(1./(np.array([1E6,1.5E-3,1.0E-2,1.6E-4,5E-3,1E-2, 1E6, 1E6,1E6]))**2)
+#        fisher_prior=np.diag(1./(np.array([1E6,  1E-6,  1E-6,  1E-6,1E-6,1E-6,1E-6,1E-6,1E6]))**2)
+#        fisher_prior=np.diag(1./(np.array([1E6,   1E6,   1E6,   1E6, 1E6, 1E6, 1E6, 1E6,1E6]))**2)
     else :
         npar=1
         fisher_prior=np.diag(1./(np.array([1E6]))**2)
@@ -348,7 +357,7 @@ def get_fisher_ll(rname,mat_project,nij,marg_all=True) :
 
     return fisher
 
-def get_fisher_dd(rname,mat_project,nij) :
+def get_fisher_dd(rname,mat_project,nij,do_print=True) :
     nl=len(mat_project)
     nel=len(mat_project[0,0])
     npar=1
@@ -377,13 +386,110 @@ def get_fisher_dd(rname,mat_project,nij) :
             d2=dl_all[i2]
             fisher[i1,i2]=np.sum((larr+0.5)*np.array([np.trace(np.dot(d1[l],d2[l])) for l in larr]))
     fisher+=fisher_prior
-    stout=""
-    for s in np.sqrt(np.diag(np.linalg.inv(fisher))) :
-        stout+="%.3lE "%s
-    print stout
+    if do_print :
+        stout=""
+        for s in np.sqrt(np.diag(np.linalg.inv(fisher))) :
+            stout+="%.3lE "%s
+        print stout
 
     return fisher
 
+ipars={'mnu':0,'och2':1,'hh':2,'obh2':3,'ns':4,'A_s':5,'lmcb':6,'etab':7,'w0':8}
+labpar={'mnu':'$\\Sigma m_\\nu$','och2':'$\\omega_c$','hh':'$h$','obh2':'$\\omega_b$','ns':'$n_s$',
+        'A_s':'$A_s$','lmcb':'$\\log_{10}M_c$','etab':'$\\eta_b$','w0':'$w$'}
+names=['mnu','och2','hh','obh2','ns','A_s','lmcb','etab','w0']
+par0={'mnu':60.,'och2':0.1197,'hh':0.67,'obh2':0.02222,'ns':0.96,'A_s':2.19,'lmcb':14.08,'etab':0.5,'w0':-1.}
+def plot_fisher_ll(params,fishers,plotpars,labels,fname_out=None) :
+
+    nfish=len(fishers)
+    iplot=np.array([ipars[k] for k in params])
+    npar=len(iplot)
+                
+    fig=plt.figure(figsize=(10,9))
+    plt.subplots_adjust(hspace=0,wspace=0)
+    for i in np.arange(npar) :
+        i_col=i
+        for j in np.arange(npar-i)+i :
+            i_row=j
+            i_plot=i_col+(npar-1)*(i_row-1)+1
+
+            ax=None
+            if i!=j :
+                ax=fig.add_subplot(npar-1,npar-1,i_plot)
+                sig0_max=0
+                sig1_max=0
+                for i_f in np.arange(nfish) :
+                    i1=iplot[i]
+                    i2=iplot[j]
+                    covar=np.zeros([2,2])
+                    covar_full=np.linalg.inv(fishers[i_f])
+                    covar[0,0]=covar_full[i1,i1]
+                    covar[0,1]=covar_full[i1,i2]
+                    covar[1,0]=covar_full[i2,i1]
+                    covar[1,1]=covar_full[i2,i2]
+                    sig0=np.sqrt(covar[0,0])
+                    sig1=np.sqrt(covar[1,1])
+
+                    if sig0>=sig0_max :
+                        sig0_max=sig0
+                    if sig1>=sig1_max :
+                        sig1_max=sig1
+
+                    w,v=np.linalg.eigh(covar)
+                    angle=180*np.arctan2(v[1,0],v[0,0])/np.pi
+                    a_1s=np.sqrt(2.3*w[0])
+                    b_1s=np.sqrt(2.3*w[1])
+                    a_2s=np.sqrt(6.17*w[0])
+                    b_2s=np.sqrt(6.17*w[1])
+
+                    centre=np.array([par0[names[i1]],par0[names[i2]]])
+                    e_1s=Ellipse(xy=centre,width=2*a_1s,height=2*b_1s,angle=angle,
+                                 facecolor=plotpars['fc'][i_f],linewidth=plotpars['lw'][i_f],
+                                 linestyle="solid",edgecolor=plotpars['lc'][i_f],
+                                 alpha=plotpars['alpha'][i_f])
+                    ax.add_artist(e_1s)
+                    ax.set_xlim([centre[0]-1.75*sig0_max,centre[0]+1.75*sig0_max])
+                    ax.set_ylim([centre[1]-1.75*sig1_max,centre[1]+1.75*sig1_max])
+                    ax.set_xlabel(labpar[names[i1]],fontsize=FS+2)
+                    ax.set_ylabel(labpar[names[i2]],fontsize=FS+2)
+                ax.xaxis.set_major_formatter(formatter)
+                ax.yaxis.set_major_formatter(formatter)
+                for label in ax.get_yticklabels():
+                    label.set_fontsize(FS-6)
+                for label in ax.get_xticklabels():
+                    label.set_fontsize(FS-6)
+                if npar==2 :
+                    leg_items=[]
+                    for il in np.arange(len(labels)) :
+                        leg_items.append(plt.Line2D((0,1),(0,0),color=plotpars['lc'][il],
+                                                    linestyle='solid',linewidth=plotpars['lw'][il]))
+                    ax.legend(leg_items,labels,loc='upper right',frameon=False,fontsize=FS,ncol=2,labelspacing=0.1)
+            if ax!=None :
+                if i_row!=npar-1 :
+                    ax.get_xaxis().set_visible(False)
+                else :
+                    plt.setp(ax.get_xticklabels(),rotation=45)
+                if i_col!=0 :
+                    ax.get_yaxis().set_visible(False)
+                if i_col==0 and i_row==0 :
+                    ax.get_yaxis().set_visible(False)
+                ax.get_xaxis().set_ticks([])
+                ax.get_yaxis().set_ticks([])
+
+    if npar!=2 :
+        ax=fig.add_subplot(npar-1,npar-1,2)
+        ax.set_xlim([-1,1])
+        ax.set_ylim([-1,1])
+        for il in np.arange(len(labels)) :
+            ax.plot([-1,1],[-3,-3],color=plotpars['fc'][il],linestyle='solid',linewidth=2,
+                    label=labels[il])
+        ax.legend(loc='upper left',frameon=False,fontsize=FS,ncol=2)
+        ax.axis('off')
+
+    if fname_out!=None :
+        plt.savefig(fname_out,bbox_inches='tight')
+#        e_2s=Ellipse(xy=centre,width=2*a_2s,height=2*b_2s,angle=angle,
+#                     facecolor=fc[i],linewidth=lw[i],linestyle="dashed",edgecolor=lc[i])
 
 #def compute_cls(oc,ob,h,a_s,ns,w,nbins,zarr,nz_bins,lmax,fname_out=False) :
 #    cosmo=ccl.Cosmology(Omega_c=oc,Omega_b=ob,h=h,A_s=a_s,n_s=ns,w0=w)#,transfer_function='eisenstein_hu')

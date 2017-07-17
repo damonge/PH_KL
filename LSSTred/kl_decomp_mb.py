@@ -136,6 +136,7 @@ isort=np.argsort(-np.sum((larr+0.5)[:,None]*llam2**2,axis=0))
 vv=vv2[:,:,isort]
 llam=np.array([np.diag(np.dot(np.transpose(vv[l]),np.dot(d_ij_fid[l],vv[l]))) for l in np.arange(nell)])
 
+'''
 for i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] :
     idn=np.ones(nbins); idn[i:]=0; p1=np.diag(idn); 
     proj=np.dot(c_ij_fid[100,:,:],np.dot(vv[100,:,:],np.dot(p1,np.transpose(vv[100,:,:]))))
@@ -146,7 +147,7 @@ exit(1)
 print np.dot(np.transpose(vv[10,:,:]),np.dot(c_ij_fid[10,:,:],vv[10,:,:]))
 print np.dot(np.dot(c_ij_fid[10,:,:],vv[10,:,:]),np.transpose(vv[10,:,:]))
 exit(1)
-
+'''
 
 
 fisher=(larr+0.5)[:,None]*llam**2
@@ -157,12 +158,12 @@ if plot_stuff :
     plt.figure();
     imodes=np.arange(nbins)+1
     plt.plot(imodes,fish_permode/np.sum(fish_permode),'go-',lw=2,
-             label='${\\rm Information\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0);
+             label='$S/N{\\rm\\,\\,in\\,\\,mode}\\,\\,p_{\\rm KL}$',markeredgewidth=0);
     plt.plot(imodes[:-1],1-fish_cum[:-1]/fish_cum[-1],'ro-',lw=2,
-             label='${\\rm Information\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
+             label='$S/N{\\rm\\,\\,in\\,\\,modes}\\,\\,>p_{\\rm KL}$',markeredgewidth=0)
     plt.legend(loc='upper right',frameon=False)
     plt.xlabel('${\\rm KL\\,\\,mode\\,\\,order}\\,\\,p_{\\rm KL}$',fontsize=18)
-    plt.ylabel('${\\rm Relative\\,information\\,\\,content}$',fontsize=18)
+    plt.ylabel('${\\rm Fraction\\,\\,of\\,\\,total\\,\\,}S/N$',fontsize=18)
     plt.xlim([0.9,9.5])
     plt.ylim([-0.03,1.03])
     plt.savefig('../Draft/Figs/information_mb.pdf',bbox_inches='tight')
